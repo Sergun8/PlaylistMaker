@@ -63,7 +63,7 @@
     <Button
         android:id="@+id/buttom_help"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/regular_font_size"
+        android:layout_height="@dimen/toolbar_height_61"
         android:backgroundTint="@color/white"
         android:drawableEnd="@drawable/ic_help"
         android:drawableTint="@color/gray"
