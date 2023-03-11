@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         val searchClickListener: View.OnClickListener = object : View.OnClickListener {
             override fun onClick(p0: View?) {
-                val displayIntent = Intent(this@MainActivity, SeatchActivity::class.java)
+                val displayIntent = Intent(this@MainActivity, SearchActivity::class.java)
                 startActivity(displayIntent)
             }
         }

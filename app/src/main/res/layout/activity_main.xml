@@ -62,7 +62,7 @@
         android:layout_marginBottom="28dp"
         android:layout_weight="1"
         android:backgroundTint="@android:color/white"
-        android:text="@string/Seting"
+        android:text="@string/Setting"
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="@dimen/medium_font_size"

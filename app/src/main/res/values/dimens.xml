@@ -2,7 +2,7 @@
 <resources>
     <dimen name="medium_font_size">22sp</dimen>
     <dimen name="regular_font_size">16sp</dimen>
-    <dimen name="toolbar_height_61">61dp</dimen>
+    <dimen name="margin_21">21dp</dimen>
     <dimen name="cornerRadius_10">10dp</dimen>
     <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_15">15dp</dimen>
