@@ -26,92 +26,101 @@
         android:textSize="@dimen/regular_font_size"
         tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="UseCompoundDrawables">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_16"
             android:layout_marginTop="@dimen/margin_21"
+            android:layout_marginEnd="@dimen/margin_8"
             android:layout_marginBottom="@dimen/margin_21"
+            android:layout_weight="1"
             android:fontFamily="@font/ys_display_regular"
             android:text="@string/share"
-            android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="@dimen/regular_font_size" />
 
         <ImageView
             android:id="@+id/buttom_share"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/margin_21"
-            android:layout_marginEnd="@dimen/margin_16"
-            android:layout_marginBottom="@dimen/margin_21"
-            android:background="@drawable/ic_share"
-            android:backgroundTint="@color/gray"
-            android:contentDescription="@string/share" />
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginTop="@dimen/margin_19"
+            android:layout_marginEnd="@dimen/margin_12"
+            android:layout_marginBottom="@dimen/margin_18"
+            android:contentDescription="@string/share"
+            android:src="@drawable/ic_share"
+            app:tint="@color/gray" />
+    </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="UseCompoundDrawables">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_16"
             android:layout_marginTop="@dimen/margin_21"
+            android:layout_marginEnd="@dimen/margin_8"
             android:layout_marginBottom="@dimen/margin_21"
+            android:layout_weight="1"
             android:fontFamily="@font/ys_display_regular"
             android:text="@string/support"
-            android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="@dimen/regular_font_size" />
 
         <ImageView
             android:id="@+id/buttom_help"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/margin_21"
-            android:layout_marginEnd="@dimen/margin_16"
-            android:layout_marginBottom="@dimen/margin_21"
-            android:background="@drawable/ic_help"
-            android:backgroundTint="@color/gray"
-            android:contentDescription="@string/support" />
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginTop="@dimen/margin_19"
+            android:layout_marginEnd="@dimen/margin_12"
+            android:layout_marginBottom="@dimen/margin_18"
+            android:contentDescription="@string/support"
+            android:src="@drawable/ic_help"
+            app:tint="@color/gray" />
+    </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="UseCompoundDrawables">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_16"
             android:layout_marginTop="@dimen/margin_21"
+            android:layout_marginEnd="@dimen/margin_8"
             android:layout_marginBottom="@dimen/margin_21"
+            android:layout_weight="1"
             android:fontFamily="@font/ys_display_regular"
             android:text="@string/agreement"
-            android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="@dimen/regular_font_size" />
 
         <ImageView
             android:id="@+id/buttom_agreement"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/margin_21"
-            android:layout_marginEnd="@dimen/margin_16"
-            android:layout_marginBottom="@dimen/margin_21"
-            android:background="@drawable/ic_arrow"
-            android:backgroundTint="@color/gray"
-            android:contentDescription="@string/agreement" />
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginTop="@dimen/margin_19"
+            android:layout_marginEnd="@dimen/margin_12"
+            android:layout_marginBottom="@dimen/margin_18"
+            android:contentDescription="@string/agreement"
+            android:src="@drawable/ic_arrow"
+            app:tint="@color/gray" />
+    </LinearLayout>
 
 
 </LinearLayout>
