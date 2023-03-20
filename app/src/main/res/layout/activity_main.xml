@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue"
-    android:orientation="vertical"
-  >
+    android:background="?attr/colorPrimary"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
@@ -14,63 +14,29 @@
         android:layout_marginTop="@dimen/margin_14"
         android:layout_marginBottom="@dimen/marginBottom_40"
         android:text="@string/playlist_maker"
-        android:textColor="@color/white"
-        android:textSize="@dimen/medium_font_size" />
+        android:fontFamily="@font/ys_display_medium"
+        android:textColor="?attr/colorSecondary"
+        android:textSize="@dimen/medium_font_size"
+        android:textFontWeight="500"
+        tools:targetApi="p" />
 
     <Button
         android:id="@+id/button_search"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/margin_17"
-        android:layout_marginEnd="@dimen/margin_15"
-        android:layout_marginBottom="@dimen/margin_16"
-        android:layout_weight="1"
-        android:backgroundTint="@android:color/white"
+        style="@style/ButtonMainActivity"
         android:text="@string/search"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="@dimen/medium_font_size"
-        app:cornerRadius="@dimen/cornerRadius_10"
-        app:icon="@drawable/ic_search_lightmode"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/ic_search_lightmode" />
 
     <Button
         android:id="@+id/button_mediateca"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/margin_17"
-        android:layout_marginEnd="@dimen/margin_15"
-        android:layout_marginBottom="@dimen/margin_16"
-        android:layout_weight="1"
-        android:backgroundTint="@android:color/white"
+        style="@style/ButtonMainActivity"
         android:text="@string/Mediateka"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="@dimen/medium_font_size"
-        app:cornerRadius="@dimen/cornerRadius_10"
-        app:icon="@drawable/ic_mediateca_light_mode"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/ic_mediateca_light_mode" />
 
     <Button
         android:id="@+id/button_settings"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/margin_17"
-        android:layout_marginEnd="@dimen/margin_15"
+        style="@style/ButtonMainActivity"
         android:layout_marginBottom="28dp"
-        android:layout_weight="1"
-        android:backgroundTint="@android:color/white"
         android:text="@string/Setting"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="@dimen/medium_font_size"
-        app:cornerRadius="@dimen/cornerRadius_10"
-        app:icon="@drawable/ic_settings_light_mode"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black"
-
-        />
+        app:icon="@drawable/ic_settings_light_mode" />
 
 </LinearLayout>

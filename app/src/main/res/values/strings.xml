@@ -9,4 +9,11 @@
     <string name="support">Написать в поддержку</string>
     <string name="agreement">Пользовательское соглашение</string>
     <string name="back">Назад</string>
+
+    <string name="agreement_link">"https://yandex.ru/legal/practicum_offer/"</string>
+    <string name="support_mail">ya.tarannov@ya.ru</string>
+    <string name="support_mail_theme">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="support_massage">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="share_link">https://practicum.yandex.ru/</string>
+
 </resources>
