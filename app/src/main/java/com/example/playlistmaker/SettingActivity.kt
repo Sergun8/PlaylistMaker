@@ -1,22 +1,24 @@
 package com.example.playlistmaker
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
+import android.widget.LinearLayout
 
 
 class SettingActivity : AppCompatActivity() {
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
-        //val themeSwitchDark = findViewById<Switch?>(R.id.switch_darck)
-        val clickAgreement = findViewById<ImageView>(R.id.buttom_agreement)
-        val clickHelp = findViewById<ImageView>(R.id.buttom_help)
-        val clickShare = findViewById<ImageView>(R.id.buttom_share)
+            //val themeSwitchDark = findViewById<Switch?>(R.id.switch_darck)
+        val clickAgreement = findViewById<LinearLayout>(R.id.buttom_agreement)
+        val clickHelp = findViewById<LinearLayout>(R.id.buttom_help)
+        val clickShare = findViewById<LinearLayout>(R.id.buttom_share)
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.settings_toolbars)
         toolbar.setNavigationOnClickListener { finish() }
         clickAgreement.setOnClickListener {
@@ -27,20 +29,8 @@ class SettingActivity : AppCompatActivity() {
         }
 
 
-        /*
-          themeSwitchDark.setOnCheckedChangeListener { _, isChecked ->
 
-                    if (isChecked) {
-                        AppCompatDelegate.setDefaultNightMode(
-                            MODE_NIGHT_YES
-                        )
-                    } else {
-                        AppCompatDelegate.setDefaultNightMode(
-                            MODE_NIGHT_NO)
-                    }
-            }
 
-           */
 
         clickHelp.setOnClickListener {
             val sendHelpIntent = Intent(Intent.ACTION_SENDTO)

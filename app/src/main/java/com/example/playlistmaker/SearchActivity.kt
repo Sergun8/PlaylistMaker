@@ -12,7 +12,10 @@ import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 
 class SearchActivity : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId", "RestrictedApi")
+
+    private var countValue = ""
+
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -50,12 +53,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    var countValue = ""
-
-    companion object {
-        const val SEARCH_VALUE = "SEARCH_VALUE"
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_VALUE, countValue)
@@ -64,6 +61,11 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         countValue = savedInstanceState.getString(SEARCH_VALUE, "")
+    }
+
+
+    companion object {
+        const val SEARCH_VALUE = "SEARCH_VALUE"
     }
 }
 
