@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/artwork_url_100"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginVertical="@dimen/margin_8"
+        android:layout_marginEnd="@dimen/margin_8"
+        android:src="@drawable/ic_toast"
+        android:contentDescription="@string/support" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/track_name"
+            style="@style/TextMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_14"
+            android:layout_marginBottom="@dimen/margin_1"
+            android:singleLine="true"
+            tools:text="Smells Like Teen Spirit" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextSmall"
+                android:id="@+id/artist_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:drawablePadding="5dp"
+                android:singleLine="true"
+                app:drawableEndCompat="@drawable/ic_ellipse"
+                app:drawableTint="?attr/colorOnSecondary"
+                tools:text="Nirvana" />
+
+            <TextView
+                style="@style/TextSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/track_time"
+                tools:text="5:01"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_18"
+        android:layout_marginBottom="@dimen/margin_19"
+        android:contentDescription="@string/back"
+        android:src="@drawable/ic_arrow"
+        app:tint="?attr/colorOnSecondary" />
+
+</LinearLayout>

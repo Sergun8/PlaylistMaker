@@ -19,7 +19,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_16">
 
         <EditText
             android:id="@+id/editTextSearch"
@@ -29,6 +30,7 @@
             android:layout_marginTop="@dimen/margin_8"
             android:layout_marginEnd="@dimen/margin_16"
             android:layout_marginBottom="@dimen/margin_8"
+            android:autofillHints=""
             android:background="@drawable/search_field"
             android:backgroundTint="@color/light_gray"
             android:cursorVisible="true"
@@ -48,15 +50,14 @@
             android:textColorHint="@color/gray"
             android:textCursorDrawable="@drawable/cursor"
             android:textSize="@dimen/regular_font_size"
-            tools:ignore="RtlSymmetry"
-            android:autofillHints="" />
+            tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
 
         <ImageView
             android:id="@+id/clearIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="@dimen/margin_16"
             android:contentDescription="@string/search"
             android:src="@drawable/clear"
             android:stateListAnimator="@null"
@@ -64,6 +65,15 @@
             app:tint="@color/gray"
             tools:ignore="RtlSymmetry" />
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewTrack"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/margin_13"
+        android:layout_marginEnd="@dimen/margin_12"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/track"/>
 
 
 </LinearLayout>
