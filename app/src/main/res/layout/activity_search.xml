@@ -40,12 +40,14 @@
             android:fontFamily="@font/ys_display_regular"
             android:foregroundGravity="center_horizontal"
             android:hint="@string/search"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:lines="1"
             android:maxLength="50"
             android:minHeight="36dp"
             android:orientation="horizontal"
             android:paddingStart="@dimen/margin_14"
+            android:singleLine="true"
             android:textColor="?attr/colorSecondaryVariant"
             android:textColorHint="@color/gray"
             android:textCursorDrawable="@drawable/cursor"
@@ -66,14 +68,58 @@
             tools:ignore="RtlSymmetry" />
     </FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewTrack"
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/margin_13"
-        android:layout_marginEnd="@dimen/margin_12"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/track"/>
+        android:layout_height="match_parent">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewTrack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/margin_13"
+            android:layout_marginEnd="@dimen/margin_12"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+        <LinearLayout
+            android:id="@+id/search_something_went_wrong"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="112dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/search_error_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/Error" />
+
+            <TextView
+                android:id="@+id/search_error_text"
+                style="@style/TextSmall"
+                android:textColor="?attr/colorOnPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="24dp"
+                android:gravity="center"
+                android:textSize="19sp"
+
+                />
+
+            <Button
+                android:id="@+id/search_update_button"
+                style="@style/TextStyleError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="?attr/colorOnPrimary"
+                android:elevation="0dp"
+                android:stateListAnimator="@null"
+                android:text="@string/search_update"
+                android:textAllCaps="false"
+                android:visibility="gone"
+                app:cornerRadius="54dp" />
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

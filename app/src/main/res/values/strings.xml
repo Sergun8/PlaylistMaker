@@ -16,5 +16,7 @@
     <string name="support_massage">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="share_link">https://practicum.yandex.ru/</string>
     <string name="image_album">image_album</string>
+    <string name="search_update">Обновить</string>
+    <string name="Error">Ошибка</string>
 
 </resources>
