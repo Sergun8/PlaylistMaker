@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="medium_font_size">22sp</dimen>
+    <dimen name="error_font_size">14sp</dimen>
     <dimen name="regular_font_size">16sp</dimen>
     <dimen name="margin_21">21dp</dimen>
     <dimen name="cornerRadius_2">2dp</dimen>
