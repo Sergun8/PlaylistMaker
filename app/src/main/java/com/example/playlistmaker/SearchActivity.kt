@@ -1,8 +1,6 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
-
-
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -10,10 +8,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
-
 import android.widget.*
-
-
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.internal.ViewUtils.hideKeyboard
 import retrofit2.Call
@@ -27,9 +22,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
 
     private var countValue = ""
-
-    val iTunesBaseUrl = "https://itunes.apple.com"
-    val retrofit = Retrofit.Builder()
+    private val iTunesBaseUrl = "https://itunes.apple.com"
+    private val retrofit = Retrofit.Builder()
         .baseUrl(iTunesBaseUrl)
         .addConverterFactory(
             GsonConverterFactory.create()
@@ -38,14 +32,12 @@ class SearchActivity : AppCompatActivity() {
 
     private val itunesService = retrofit.create(ItunesAPI::class.java)
     private val trackList = ArrayList<Track>()
+    private val adapter = TrackAdapter()
     private lateinit var inputEditText: EditText
     private lateinit var rvTrack: RecyclerView
     private lateinit var clearButton: ImageView
-    private val adapter = TrackAdapter()
-    private val notFound = "Ничего не нашлось"
-    private val noConnection =
-        "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
-
+    private lateinit var notFound: String
+    private lateinit var noConnection: String
     private lateinit var updateButton: Button
     private lateinit var errorImage: ImageView
     private lateinit var errorText: TextView
@@ -55,12 +47,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        inputEditText = findViewById(R.id.editTextSearch)
-        clearButton = findViewById(R.id.clearIcon)
-        rvTrack = findViewById(R.id.recyclerViewTrack)
-        updateButton = findViewById(R.id.search_update_button)
-        errorImage = findViewById(R.id.search_error_image)
-        errorText = findViewById(R.id.search_error_text)
+        initViews()
         val toolbarSearchActivity =
             findViewById<androidx.appcompat.widget.Toolbar>(R.id.search_toolbars)
         toolbarSearchActivity.setNavigationOnClickListener { finish() }
@@ -97,6 +84,16 @@ class SearchActivity : AppCompatActivity() {
         rvTrack.adapter = adapter
     }
 
+    private fun initViews() {
+        inputEditText = findViewById(R.id.editTextSearch)
+        clearButton = findViewById(R.id.clearIcon)
+        rvTrack = findViewById(R.id.recyclerViewTrack)
+        updateButton = findViewById(R.id.search_update_button)
+        errorImage = findViewById(R.id.search_error_image)
+        errorText = findViewById(R.id.search_error_text)
+        notFound = getString(R.string.nothing_was_found)
+        noConnection = getString(R.string.communication_problems)
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(text: String) {

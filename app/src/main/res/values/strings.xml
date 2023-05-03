@@ -18,5 +18,7 @@
     <string name="image_album">image_album</string>
     <string name="search_update">Обновить</string>
     <string name="Error">Ошибка</string>
+    <string name="nothing_was_found">"Ничего не нашлось"</string>
+    <string name="communication_problems">"Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"</string>
 
 </resources>
