@@ -129,7 +129,8 @@
                 android:layout_gravity="center_horizontal"
                 android:text="@string/You_search"
                 android:textColor="?attr/colorOnPrimary"
-                android:textSize="19sp" />
+                android:textSize="19sp"
+                android:visibility="gone"/>
 
             <FrameLayout
                 android:layout_width="match_parent"

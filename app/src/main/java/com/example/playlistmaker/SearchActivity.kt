@@ -52,6 +52,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var rvHistoryList: RecyclerView
     private lateinit var clearHistory: Button
     private lateinit var searchHistory: SearchHistory
+    private lateinit var yuoSearch: TextView
 
 
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
@@ -120,6 +121,7 @@ class SearchActivity : AppCompatActivity() {
         clearHistory = findViewById(R.id.clear_history)
         rvHistoryList = findViewById(R.id.history_search_list)
         searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE))
+        yuoSearch = findViewById(R.id.you_searched)
         adapter = TrackAdapter {
             addTrackHistory(it)
             Toast.makeText(this@SearchActivity, "НАЖАТИЕ НА ТРЕК", Toast.LENGTH_SHORT).show()
@@ -226,11 +228,15 @@ class SearchActivity : AppCompatActivity() {
 
     private fun historyListVisibility(b: Boolean) {
         if (b) {
+            yuoSearch.visibility = VISIBLE
             historyView.visibility = VISIBLE
             errorImage.visibility = GONE
             errorText.visibility = GONE
             updateButton.visibility = GONE
-        } else historyView.visibility = GONE
+        } else {
+            historyView.visibility = GONE
+            yuoSearch.visibility = GONE
+        }
     }
 
     override fun onStop() {
