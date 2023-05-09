@@ -7,6 +7,9 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.LinearLayout
+import com.example.playlistmaker.SearchActivity.Companion.NIGHT_THEME
+import com.example.playlistmaker.SearchActivity.Companion.SHARED_PREFS
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 
 class SettingActivity : AppCompatActivity() {
@@ -15,7 +18,7 @@ class SettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
-            //val themeSwitchDark = findViewById<Switch?>(R.id.switch_darck)
+        val themeSwitchDark = findViewById<SwitchMaterial>(R.id.switch_darck)
         val clickAgreement = findViewById<LinearLayout>(R.id.buttom_agreement)
         val clickHelp = findViewById<LinearLayout>(R.id.buttom_help)
         val clickShare = findViewById<LinearLayout>(R.id.buttom_share)
@@ -27,10 +30,14 @@ class SettingActivity : AppCompatActivity() {
 
             startActivity(browserIntent)
         }
+        themeSwitchDark.isChecked = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
+            .getBoolean(NIGHT_THEME, false)
 
+        themeSwitchDark.setOnCheckedChangeListener { _, checked ->
+            (applicationContext as App).switchTheme(checked)
+            (applicationContext as App).saveTheme(checked)
 
-
-
+        }
 
         clickHelp.setOnClickListener {
             val sendHelpIntent = Intent(Intent.ACTION_SENDTO)

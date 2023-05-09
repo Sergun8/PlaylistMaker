@@ -15,10 +15,11 @@
         app:title="@string/Setting"
         app:titleTextAppearance="@style/TextStyleToolbar" />
 
-    <Switch
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_darck"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="start"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/ys_display_regular"
         android:paddingStart="@dimen/margin_16"

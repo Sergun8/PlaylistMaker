@@ -1,14 +1,20 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.internal.ViewUtils.hideKeyboard
 import retrofit2.Call
@@ -29,10 +35,11 @@ class SearchActivity : AppCompatActivity() {
             GsonConverterFactory.create()
         )
         .build()
-
     private val itunesService = retrofit.create(ItunesAPI::class.java)
     private val trackList = ArrayList<Track>()
-    private val adapter = TrackAdapter()
+    private val historyList = ArrayList<Track>()
+    private lateinit var adapter: TrackAdapter
+    private lateinit var historyAdapter: TrackAdapter
     private lateinit var inputEditText: EditText
     private lateinit var rvTrack: RecyclerView
     private lateinit var clearButton: ImageView
@@ -41,6 +48,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var updateButton: Button
     private lateinit var errorImage: ImageView
     private lateinit var errorText: TextView
+    private lateinit var historyView: LinearLayout
+    private lateinit var rvHistoryList: RecyclerView
+    private lateinit var clearHistory: Button
+    private lateinit var searchHistory: SearchHistory
 
 
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
@@ -56,6 +67,9 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.setText("")
             hideKeyboard(currentFocus ?: View(this))
             trackList.clear()
+            errorImage.visibility = GONE
+            errorText.visibility = GONE
+            updateButton.visibility = GONE
             adapter.notifyDataSetChanged()
         }
 
@@ -65,13 +79,19 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
+
+                historyView.visibility =
+                    if (inputEditText.text.isEmpty()) VISIBLE
+                    else GONE
+
+                clearHistory.visibility =
+                    if (historyList.isEmpty()) GONE
+                    else VISIBLE
             }
 
             override fun afterTextChanged(s: Editable?) {
             }
         }
-
-
         inputEditText.addTextChangedListener(simpleTextWatcher)
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -79,11 +99,14 @@ class SearchActivity : AppCompatActivity() {
                 false
             } else true
         }
+        historyList.addAll(searchHistory.readHistory())
 
-        adapter.trackList = trackList
-        rvTrack.adapter = adapter
+        inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            historyListVisibility(hasFocus && inputEditText.text.isEmpty() && historyList.isNotEmpty())
+        }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initViews() {
         inputEditText = findViewById(R.id.editTextSearch)
         clearButton = findViewById(R.id.clearIcon)
@@ -93,6 +116,26 @@ class SearchActivity : AppCompatActivity() {
         errorText = findViewById(R.id.search_error_text)
         notFound = getString(R.string.nothing_was_found)
         noConnection = getString(R.string.communication_problems)
+        historyView = findViewById(R.id.search_history)
+        clearHistory = findViewById(R.id.clear_history)
+        rvHistoryList = findViewById(R.id.history_search_list)
+        searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE))
+        adapter = TrackAdapter {
+            addTrackHistory(it)
+            Toast.makeText(this@SearchActivity, "НАЖАТИЕ НА ТРЕК", Toast.LENGTH_SHORT).show()
+        }
+        adapter.trackList = trackList
+        rvTrack.adapter = adapter
+        historyAdapter = TrackAdapter {
+            Toast.makeText(this@SearchActivity, "НАЖАТИЕ НА ТРЕК", Toast.LENGTH_SHORT).show()
+        }
+        historyAdapter.trackList = historyList
+        rvHistoryList.adapter = historyAdapter
+        clearHistory.setOnClickListener {
+            historyList.clear()
+            rvHistoryList.adapter?.notifyDataSetChanged()
+            historyListVisibility(historyList.isNotEmpty())
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -101,7 +144,7 @@ class SearchActivity : AppCompatActivity() {
             notFound -> {
                 errorImage.visibility = VISIBLE
                 errorText.visibility = VISIBLE
-                updateButton.visibility = View.GONE
+                updateButton.visibility = GONE
                 trackList.clear()
                 errorImage.setImageResource(R.drawable.ic_nothing_found)
                 errorText.text = text
@@ -112,16 +155,16 @@ class SearchActivity : AppCompatActivity() {
                 errorText.visibility = VISIBLE
                 updateButton.visibility = VISIBLE
                 trackList.clear()
-                rvTrack.visibility = View.GONE
+                rvTrack.visibility = GONE
                 errorImage.setImageResource(R.drawable.ic_not_internet)
                 errorText.text = text
                 adapter.notifyDataSetChanged()
                 updateButton.setOnClickListener { search() }
             }
             else -> {
-                errorImage.visibility = View.GONE
-                errorText.visibility = View.GONE
-                updateButton.visibility = View.GONE
+                errorImage.visibility = GONE
+                errorText.visibility = GONE
+                updateButton.visibility = GONE
             }
         }
     }
@@ -140,9 +183,9 @@ class SearchActivity : AppCompatActivity() {
                     ) {
                         if (response.code() == 200) {
                             rvTrack.visibility = VISIBLE
-                            errorImage.visibility = View.GONE
-                            errorText.visibility = View.GONE
-                            updateButton.visibility = View.GONE
+                            errorImage.visibility = GONE
+                            errorText.visibility = GONE
+                            updateButton.visibility = GONE
                             trackList.clear()
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 trackList.addAll(response.body()?.results!!)
@@ -165,7 +208,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
-            View.GONE
+            GONE
         } else {
             VISIBLE
         }
@@ -181,9 +224,52 @@ class SearchActivity : AppCompatActivity() {
         countValue = savedInstanceState.getString(SEARCH_VALUE, "")
     }
 
+    private fun historyListVisibility(b: Boolean) {
+        if (b) {
+            historyView.visibility = VISIBLE
+            errorImage.visibility = GONE
+            errorText.visibility = GONE
+            updateButton.visibility = GONE
+        } else historyView.visibility = GONE
+    }
+
+    override fun onStop() {
+        super.onStop()
+        searchHistory.saveHistory(historyList)
+    }
+
+    private fun addTrackHistory(track: Track) = when {
+
+        historyList.contains(track) -> {
+            val position = historyList.indexOf(track)
+            historyList.remove(track)
+            rvHistoryList.adapter?.notifyItemRemoved(position)
+            rvHistoryList.adapter?.notifyItemRangeChanged(position, historyList.size)
+            historyList.add(0, track)
+            rvHistoryList.adapter?.notifyItemInserted(0)
+            rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
+        }
+        historyList.size < 10 -> {
+            historyList.add(0, track)
+            rvHistoryList.adapter?.notifyItemInserted(0)
+            rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
+        }
+
+        else -> {
+            historyList.removeAt(9)
+            rvHistoryList.adapter?.notifyItemRemoved(9)
+            rvHistoryList.adapter?.notifyItemRangeChanged(9, historyList.size)
+            historyList.add(0, track)
+            rvHistoryList.adapter?.notifyItemInserted(0)
+            rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
+        }
+    }
 
     companion object {
         const val SEARCH_VALUE = "SEARCH_VALUE"
+        const val SHARED_PREFS = "SHARED_PREFS"
+        const val NIGHT_THEME = "NIGHT_THEME"
+        const val HISTORY_KEY = "HISTORY_KEY"
     }
 }
 

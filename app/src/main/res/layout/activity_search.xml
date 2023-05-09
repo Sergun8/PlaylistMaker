@@ -98,28 +98,59 @@
             <TextView
                 android:id="@+id/search_error_text"
                 style="@style/TextSmall"
-                android:textColor="?attr/colorOnPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="24dp"
                 android:gravity="center"
-                android:textSize="19sp"
-
-                />
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="19sp" />
 
             <Button
                 android:id="@+id/search_update_button"
+                style="@style/ButtonError"
+                android:layout_gravity="center"
+                android:text="@string/search_update"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_history"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/you_searched"
                 style="@style/TextStyleError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="?attr/colorOnPrimary"
-                android:elevation="0dp"
-                android:stateListAnimator="@null"
-                android:text="@string/search_update"
-                android:textAllCaps="false"
-                android:visibility="gone"
-                app:cornerRadius="54dp" />
+                android:layout_gravity="center_horizontal"
+                android:text="@string/You_search"
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="19sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/history_search_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_13"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="@dimen/margin_12"
+                    android:layout_marginBottom="60dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                <Button
+                    android:id="@+id/clear_history"
+                    style="@style/ButtonError"
+                    android:text="@string/clear_history" />
+            </FrameLayout>
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>
