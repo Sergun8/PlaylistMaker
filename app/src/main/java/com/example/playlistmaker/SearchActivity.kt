@@ -226,8 +226,8 @@ class SearchActivity : AppCompatActivity() {
         countValue = savedInstanceState.getString(SEARCH_VALUE, "")
     }
 
-    private fun historyListVisibility(b: Boolean) {
-        if (b) {
+    private fun historyListVisibility(yes: Boolean) {
+        if (yes) {
             yuoSearch.visibility = VISIBLE
             historyView.visibility = VISIBLE
             errorImage.visibility = GONE
@@ -275,7 +275,6 @@ class SearchActivity : AppCompatActivity() {
         const val SEARCH_VALUE = "SEARCH_VALUE"
         const val SHARED_PREFS = "SHARED_PREFS"
         const val NIGHT_THEME = "NIGHT_THEME"
-        const val HISTORY_KEY = "HISTORY_KEY"
     }
 }
 

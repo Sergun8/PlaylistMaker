@@ -1,7 +1,6 @@
 package com.example.playlistmaker
 
 import android.content.SharedPreferences
-import com.example.playlistmaker.SearchActivity.Companion.HISTORY_KEY
 import com.google.gson.Gson
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
@@ -20,6 +19,8 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
         return Gson().fromJson(json, Array<Track>::class.java)
 
     }
-
+    companion object {
+       private const val HISTORY_KEY = "HISTORY_KEY"
+    }
 
 }
