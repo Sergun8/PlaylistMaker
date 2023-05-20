@@ -33,6 +33,9 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight" tools:targetApi="p">500</item>
     </style>
+    <style name="StyleBackgroundPlayer">
+        <item name="android:background">?attr/colorPrimary</item>
+    </style>
 
 
 
