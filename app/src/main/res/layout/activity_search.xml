@@ -48,7 +48,7 @@
             android:orientation="horizontal"
             android:paddingStart="@dimen/margin_14"
             android:singleLine="true"
-            android:textColor="?attr/colorSecondaryVariant"
+            android:textColor="@color/black"
             android:textColorHint="@color/gray"
             android:textCursorDrawable="@drawable/cursor"
             android:textSize="@dimen/regular_font_size"
