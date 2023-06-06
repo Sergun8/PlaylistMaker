@@ -1,7 +1,10 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -12,11 +15,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.internal.ViewUtils.hideKeyboard
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -53,7 +57,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistory: Button
     private lateinit var searchHistory: SearchHistory
     private lateinit var yuoSearch: TextView
-
+    private lateinit var progressBar: ProgressBar
+    private val searchRunnable = Runnable { search() }
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
 
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,10 +87,14 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
-
-                historyView.visibility =
-                    if (inputEditText.text.isEmpty()) VISIBLE
-                    else GONE
+                searchDebounce()
+                if (inputEditText.text.isEmpty()) {
+                    errorImage.visibility = GONE
+                    errorText.visibility = GONE
+                    updateButton.visibility = GONE
+                    rvTrack.visibility = GONE
+                    historyView.visibility = VISIBLE
+                } else historyView.visibility = GONE
 
                 clearHistory.visibility =
                     if (historyList.isEmpty()) GONE
@@ -122,15 +133,18 @@ class SearchActivity : AppCompatActivity() {
         rvHistoryList = findViewById(R.id.history_search_list)
         searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE))
         yuoSearch = findViewById(R.id.you_searched)
+
         adapter = TrackAdapter {
             addTrackHistory(it)
-            Toast.makeText(this@SearchActivity, "НАЖАТИЕ НА ТРЕК", Toast.LENGTH_SHORT).show()
+            if (clickDebounce()) startPlayer(it)
         }
         adapter.trackList = trackList
         rvTrack.adapter = adapter
         historyAdapter = TrackAdapter {
-            Toast.makeText(this@SearchActivity, "НАЖАТИЕ НА ТРЕК", Toast.LENGTH_SHORT).show()
+            addTrackHistory(it)
+            startPlayer(it)
         }
+
         historyAdapter.trackList = historyList
         rvHistoryList.adapter = historyAdapter
         clearHistory.setOnClickListener {
@@ -138,10 +152,13 @@ class SearchActivity : AppCompatActivity() {
             rvHistoryList.adapter?.notifyDataSetChanged()
             historyListVisibility(historyList.isNotEmpty())
         }
+        progressBar = findViewById(R.id.progressBar)
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(text: String) {
+        progressBar.visibility = GONE
         when (text) {
             notFound -> {
                 errorImage.visibility = VISIBLE
@@ -173,8 +190,12 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun search() {
-
+        errorImage.visibility = GONE
+        errorText.visibility = GONE
+        updateButton.visibility = GONE
+        rvTrack.visibility = GONE
         if (inputEditText.text.isNotEmpty()) {
+            progressBar.visibility = VISIBLE
             itunesService.search(inputEditText.text.toString())
                 .enqueue(object : Callback<TrackResponse> {
 
@@ -188,6 +209,7 @@ class SearchActivity : AppCompatActivity() {
                             errorImage.visibility = GONE
                             errorText.visibility = GONE
                             updateButton.visibility = GONE
+                            progressBar.visibility = GONE
                             trackList.clear()
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 trackList.addAll(response.body()?.results!!)
@@ -244,6 +266,14 @@ class SearchActivity : AppCompatActivity() {
         searchHistory.saveHistory(historyList)
     }
 
+    private fun startPlayer(track: Track) {
+        val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+            .apply {
+                putExtra(TRACK, Gson().toJson(track))
+            }
+        startActivity(displayIntent)
+    }
+
     private fun addTrackHistory(track: Track) = when {
 
         historyList.contains(track) -> {
@@ -271,10 +301,27 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     companion object {
         const val SEARCH_VALUE = "SEARCH_VALUE"
         const val SHARED_PREFS = "SHARED_PREFS"
         const val NIGHT_THEME = "NIGHT_THEME"
+        const val TRACK = "TRACK"
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
 

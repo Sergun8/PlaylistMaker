@@ -22,5 +22,16 @@
     <string name="communication_problems">"Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"</string>
     <string name="You_search">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
+    <string name="year">Год</string>
+    <string name="genre">Жанр</string>
+    <string name="country">Страна</string>
+    <string name="album">Альбом</string>
+    <string name="duration">Длительность</string>
+    <string name="excerpt_duration" />
+    <string name="like">Кнопка в избранное</string>
+    <string name="play">Воспроизведение</string>
+    <string name="add">Добавление</string>
+    <string name="holder">заглушка</string>
+    <string name="time_null">00:00</string>
 
 </resources>

@@ -36,7 +36,7 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="cornerRadius">54dp</item>
-        <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorSecondaryVariant</item>
         <item name="android:textFontWeight" tools:targetApi="p">500</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:stateListAnimator">@null</item>
@@ -91,6 +91,21 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight" tools:targetApi="p">500</item>
     </style>
-
+    <style name="TextStylePlayer" parent="TextAppearance.AppCompat.Light.SearchResult.Title">
+        <item name="android:textSize">@dimen/medium_font_size</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+    </style>
+    <style name="TextStylePlayerSmall" parent="TextAppearance.AppCompat.Light.SearchResult.Title">
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+    </style>
+    <style name="TextStylePlayerSmallLeft" parent="TextAppearance.AppCompat.Light.SearchResult.Title">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight" tools:targetApi="p">400</item>
+    </style>
 
 </resources>
