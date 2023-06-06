@@ -1,11 +1,15 @@
 package com.example.playlistmaker
 
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R.dimen
@@ -32,12 +36,16 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var playButton: ImageButton
     private lateinit var likeButton: ImageButton
     private lateinit var track: Track
-
+    private lateinit var mediaPlayer: MediaPlayer
+    private val handler = Handler(Looper.getMainLooper())
+    private val setTimeRunnable = Runnable { setTime() }
+    private var playerState = STATE_DEFAULT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
         initViews()
+        preparePlayer()
     }
 
     private fun initViews() {
@@ -54,10 +62,13 @@ class PlayerActivity : AppCompatActivity() {
         country = findViewById(R.id.changeable_country)
         addButton = findViewById(R.id.add_button)
         playButton = findViewById(R.id.play_button)
+        playButton.setOnClickListener {
+            playbackControl()
+        }
         likeButton = findViewById(R.id.like_button)
         excerptDuration = findViewById(R.id.excerpt_duration)
         track = Gson().fromJson((intent.getStringExtra(TRACK)), Track::class.java)
-
+        mediaPlayer = MediaPlayer()
         Glide.with(this)
             .load(track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"))
             .placeholder(R.drawable.ic_toast)
@@ -93,4 +104,68 @@ class PlayerActivity : AppCompatActivity() {
     private fun formatTime(track: Track): CharSequence? {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis.toLong())
     }
+
+    private fun preparePlayer() {
+        mediaPlayer.setDataSource(track.previewUrl)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playButton.isEnabled = true
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            playButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_play_button))
+            playerState = STATE_PREPARED
+            handler.removeCallbacks(setTimeRunnable)
+            excerptDuration.text = getString(R.string.time_null)
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_pause_button))
+        playerState = STATE_PLAYING
+        handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playButton.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_play_button))
+        playerState = STATE_PAUSED
+        handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+    }
+
+    private fun playbackControl() {
+        when (playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+        handler.removeCallbacks(setTimeRunnable)
+    }
+    private fun setTime() {
+        excerptDuration.text =
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+        handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+    }
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val SET_TIME_DELAY = 400L
+    }
+
+
 }
