@@ -1,7 +1,6 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,10 +13,10 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.internal.ViewUtils.hideKeyboard
-import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -123,18 +122,15 @@ class SearchActivity : AppCompatActivity() {
         rvHistoryList = findViewById(R.id.history_search_list)
         searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE))
         yuoSearch = findViewById(R.id.you_searched)
-
         adapter = TrackAdapter {
             addTrackHistory(it)
-            startPlayer(it)
+            Toast.makeText(this@SearchActivity, "НАЖАТИЕ НА ТРЕК", Toast.LENGTH_SHORT).show()
         }
         adapter.trackList = trackList
         rvTrack.adapter = adapter
         historyAdapter = TrackAdapter {
-            addTrackHistory(it)
-            startPlayer(it)
+            Toast.makeText(this@SearchActivity, "НАЖАТИЕ НА ТРЕК", Toast.LENGTH_SHORT).show()
         }
-
         historyAdapter.trackList = historyList
         rvHistoryList.adapter = historyAdapter
         clearHistory.setOnClickListener {
@@ -248,14 +244,6 @@ class SearchActivity : AppCompatActivity() {
         searchHistory.saveHistory(historyList)
     }
 
-    private fun startPlayer(track: Track) {
-        val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
-            .apply {
-                putExtra(TRACK, Gson().toJson(track))
-            }
-        startActivity(displayIntent)
-    }
-
     private fun addTrackHistory(track: Track) = when {
 
         historyList.contains(track) -> {
@@ -287,7 +275,6 @@ class SearchActivity : AppCompatActivity() {
         const val SEARCH_VALUE = "SEARCH_VALUE"
         const val SHARED_PREFS = "SHARED_PREFS"
         const val NIGHT_THEME = "NIGHT_THEME"
-        const val TRACK = "TRACK"
     }
 }
 
