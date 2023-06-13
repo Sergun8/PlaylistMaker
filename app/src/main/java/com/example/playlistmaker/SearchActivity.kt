@@ -3,8 +3,6 @@ package com.example.playlistmaker
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -15,7 +13,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -26,11 +23,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-
 @Suppress("UNUSED_EXPRESSION")
 class SearchActivity : AppCompatActivity() {
-
     private var countValue = ""
     private val iTunesBaseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
@@ -57,11 +51,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistory: Button
     private lateinit var searchHistory: SearchHistory
     private lateinit var yuoSearch: TextView
-    private lateinit var progressBar: ProgressBar
-    private val searchRunnable = Runnable { search() }
-    private val handler = Handler(Looper.getMainLooper())
-    private var isClickAllowed = true
-
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +59,6 @@ class SearchActivity : AppCompatActivity() {
         val toolbarSearchActivity =
             findViewById<androidx.appcompat.widget.Toolbar>(R.id.search_toolbars)
         toolbarSearchActivity.setNavigationOnClickListener { finish() }
-
         clearButton.setOnClickListener {
             inputEditText.setText("")
             hideKeyboard(currentFocus ?: View(this))
@@ -80,27 +68,18 @@ class SearchActivity : AppCompatActivity() {
             updateButton.visibility = GONE
             adapter.notifyDataSetChanged()
         }
-
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
-                searchDebounce()
-                if (inputEditText.text.isEmpty()) {
-                    errorImage.visibility = GONE
-                    errorText.visibility = GONE
-                    updateButton.visibility = GONE
-                    rvTrack.visibility = GONE
-                    historyView.visibility = VISIBLE
-                } else historyView.visibility = GONE
-
+                historyView.visibility =
+                    if (inputEditText.text.isEmpty()) VISIBLE
+                    else GONE
                 clearHistory.visibility =
                     if (historyList.isEmpty()) GONE
                     else VISIBLE
             }
-
             override fun afterTextChanged(s: Editable?) {
             }
         }
@@ -112,12 +91,10 @@ class SearchActivity : AppCompatActivity() {
             } else true
         }
         historyList.addAll(searchHistory.readHistory())
-
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             historyListVisibility(hasFocus && inputEditText.text.isEmpty() && historyList.isNotEmpty())
         }
     }
-
     @SuppressLint("NotifyDataSetChanged")
     private fun initViews() {
         inputEditText = findViewById(R.id.editTextSearch)
@@ -136,7 +113,7 @@ class SearchActivity : AppCompatActivity() {
 
         adapter = TrackAdapter {
             addTrackHistory(it)
-            if (clickDebounce()) startPlayer(it)
+            startPlayer(it)
         }
         adapter.trackList = trackList
         rvTrack.adapter = adapter
@@ -152,13 +129,9 @@ class SearchActivity : AppCompatActivity() {
             rvHistoryList.adapter?.notifyDataSetChanged()
             historyListVisibility(historyList.isNotEmpty())
         }
-        progressBar = findViewById(R.id.progressBar)
-
     }
-
     @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(text: String) {
-        progressBar.visibility = GONE
         when (text) {
             notFound -> {
                 errorImage.visibility = VISIBLE
@@ -187,18 +160,10 @@ class SearchActivity : AppCompatActivity() {
             }
         }
     }
-
-
     private fun search() {
-        errorImage.visibility = GONE
-        errorText.visibility = GONE
-        updateButton.visibility = GONE
-        rvTrack.visibility = GONE
         if (inputEditText.text.isNotEmpty()) {
-            progressBar.visibility = VISIBLE
             itunesService.search(inputEditText.text.toString())
                 .enqueue(object : Callback<TrackResponse> {
-
                     @SuppressLint("NotifyDataSetChanged")
                     override fun onResponse(
                         call: Call<TrackResponse>,
@@ -209,7 +174,6 @@ class SearchActivity : AppCompatActivity() {
                             errorImage.visibility = GONE
                             errorText.visibility = GONE
                             updateButton.visibility = GONE
-                            progressBar.visibility = GONE
                             trackList.clear()
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 trackList.addAll(response.body()?.results!!)
@@ -221,15 +185,12 @@ class SearchActivity : AppCompatActivity() {
                             showMessage(noConnection)
                         }
                     }
-
                     override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
                         showMessage(noConnection)
                     }
                 })
         }
     }
-
-
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             GONE
@@ -237,17 +198,14 @@ class SearchActivity : AppCompatActivity() {
             VISIBLE
         }
     }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_VALUE, countValue)
     }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         countValue = savedInstanceState.getString(SEARCH_VALUE, "")
     }
-
     private fun historyListVisibility(yes: Boolean) {
         if (yes) {
             yuoSearch.visibility = VISIBLE
@@ -260,7 +218,6 @@ class SearchActivity : AppCompatActivity() {
             yuoSearch.visibility = GONE
         }
     }
-
     override fun onStop() {
         super.onStop()
         searchHistory.saveHistory(historyList)
@@ -290,7 +247,6 @@ class SearchActivity : AppCompatActivity() {
             rvHistoryList.adapter?.notifyItemInserted(0)
             rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
         }
-
         else -> {
             historyList.removeAt(9)
             rvHistoryList.adapter?.notifyItemRemoved(9)
@@ -300,28 +256,10 @@ class SearchActivity : AppCompatActivity() {
             rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
         }
     }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
-
     companion object {
         const val SEARCH_VALUE = "SEARCH_VALUE"
         const val SHARED_PREFS = "SHARED_PREFS"
         const val NIGHT_THEME = "NIGHT_THEME"
         const val TRACK = "TRACK"
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
-        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
-
