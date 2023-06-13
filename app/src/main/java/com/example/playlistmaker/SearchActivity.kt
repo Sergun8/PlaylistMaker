@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,20 +14,17 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.internal.ViewUtils.hideKeyboard
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-
 @Suppress("UNUSED_EXPRESSION")
 class SearchActivity : AppCompatActivity() {
-
     private var countValue = ""
     private val iTunesBaseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
@@ -53,8 +51,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistory: Button
     private lateinit var searchHistory: SearchHistory
     private lateinit var yuoSearch: TextView
-
-
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +59,6 @@ class SearchActivity : AppCompatActivity() {
         val toolbarSearchActivity =
             findViewById<androidx.appcompat.widget.Toolbar>(R.id.search_toolbars)
         toolbarSearchActivity.setNavigationOnClickListener { finish() }
-
         clearButton.setOnClickListener {
             inputEditText.setText("")
             hideKeyboard(currentFocus ?: View(this))
@@ -73,23 +68,18 @@ class SearchActivity : AppCompatActivity() {
             updateButton.visibility = GONE
             adapter.notifyDataSetChanged()
         }
-
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
-
                 historyView.visibility =
                     if (inputEditText.text.isEmpty()) VISIBLE
                     else GONE
-
                 clearHistory.visibility =
                     if (historyList.isEmpty()) GONE
                     else VISIBLE
             }
-
             override fun afterTextChanged(s: Editable?) {
             }
         }
@@ -101,12 +91,10 @@ class SearchActivity : AppCompatActivity() {
             } else true
         }
         historyList.addAll(searchHistory.readHistory())
-
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             historyListVisibility(hasFocus && inputEditText.text.isEmpty() && historyList.isNotEmpty())
         }
     }
-
     @SuppressLint("NotifyDataSetChanged")
     private fun initViews() {
         inputEditText = findViewById(R.id.editTextSearch)
@@ -122,15 +110,18 @@ class SearchActivity : AppCompatActivity() {
         rvHistoryList = findViewById(R.id.history_search_list)
         searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE))
         yuoSearch = findViewById(R.id.you_searched)
+
         adapter = TrackAdapter {
             addTrackHistory(it)
-            Toast.makeText(this@SearchActivity, "НАЖАТИЕ НА ТРЕК", Toast.LENGTH_SHORT).show()
+            startPlayer(it)
         }
         adapter.trackList = trackList
         rvTrack.adapter = adapter
         historyAdapter = TrackAdapter {
-            Toast.makeText(this@SearchActivity, "НАЖАТИЕ НА ТРЕК", Toast.LENGTH_SHORT).show()
+            addTrackHistory(it)
+            startPlayer(it)
         }
+
         historyAdapter.trackList = historyList
         rvHistoryList.adapter = historyAdapter
         clearHistory.setOnClickListener {
@@ -139,7 +130,6 @@ class SearchActivity : AppCompatActivity() {
             historyListVisibility(historyList.isNotEmpty())
         }
     }
-
     @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(text: String) {
         when (text) {
@@ -170,14 +160,10 @@ class SearchActivity : AppCompatActivity() {
             }
         }
     }
-
-
     private fun search() {
-
         if (inputEditText.text.isNotEmpty()) {
             itunesService.search(inputEditText.text.toString())
                 .enqueue(object : Callback<TrackResponse> {
-
                     @SuppressLint("NotifyDataSetChanged")
                     override fun onResponse(
                         call: Call<TrackResponse>,
@@ -199,15 +185,12 @@ class SearchActivity : AppCompatActivity() {
                             showMessage(noConnection)
                         }
                     }
-
                     override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
                         showMessage(noConnection)
                     }
                 })
         }
     }
-
-
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             GONE
@@ -215,17 +198,14 @@ class SearchActivity : AppCompatActivity() {
             VISIBLE
         }
     }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_VALUE, countValue)
     }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         countValue = savedInstanceState.getString(SEARCH_VALUE, "")
     }
-
     private fun historyListVisibility(yes: Boolean) {
         if (yes) {
             yuoSearch.visibility = VISIBLE
@@ -238,10 +218,17 @@ class SearchActivity : AppCompatActivity() {
             yuoSearch.visibility = GONE
         }
     }
-
     override fun onStop() {
         super.onStop()
         searchHistory.saveHistory(historyList)
+    }
+
+    private fun startPlayer(track: Track) {
+        val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+            .apply {
+                putExtra(TRACK, Gson().toJson(track))
+            }
+        startActivity(displayIntent)
     }
 
     private fun addTrackHistory(track: Track) = when {
@@ -260,7 +247,6 @@ class SearchActivity : AppCompatActivity() {
             rvHistoryList.adapter?.notifyItemInserted(0)
             rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
         }
-
         else -> {
             historyList.removeAt(9)
             rvHistoryList.adapter?.notifyItemRemoved(9)
@@ -270,11 +256,10 @@ class SearchActivity : AppCompatActivity() {
             rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
         }
     }
-
     companion object {
         const val SEARCH_VALUE = "SEARCH_VALUE"
         const val SHARED_PREFS = "SHARED_PREFS"
         const val NIGHT_THEME = "NIGHT_THEME"
+        const val TRACK = "TRACK"
     }
 }
-
