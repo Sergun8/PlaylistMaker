@@ -82,6 +82,7 @@
             android:layout_marginEnd="@dimen/margin_12"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="44dp"
