@@ -1,4 +1,4 @@
-package com.example.playlistmaker.Player.presentation
+package com.example.playlistmaker.player.presentation
 
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
@@ -11,16 +11,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.Player.data.PlayerInteractorRepositoryImpl
-import com.example.playlistmaker.Player.domain.PlayerInteractor
-import com.example.playlistmaker.Player.domain.PlayerState
 import com.example.playlistmaker.R.dimen
 import com.example.playlistmaker.R.drawable
 import com.example.playlistmaker.R.id
 import com.example.playlistmaker.R.layout
 import com.example.playlistmaker.R.string
 import com.example.playlistmaker.SearchActivity.Companion.TRACK
-import com.example.playlistmaker.Player.domain.Track
+import com.example.playlistmaker.player.Creator
+import com.example.playlistmaker.player.domain.PlayerState
+import com.example.playlistmaker.player.domain.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -42,11 +41,9 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var playButton: ImageButton
     private lateinit var likeButton: ImageButton
     private lateinit var track: Track
-    private lateinit var mediaPlayer: PlayerInteractor
+    private val mediaPlayer = Creator.providePlayerInteractor()
     private val handler = Handler(Looper.getMainLooper())
     private val setTimeRunnable = Runnable { setTime() }
-    private val interactor = PlayerInteractorRepositoryImpl()
-
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +51,7 @@ class PlayerActivity : AppCompatActivity() {
         setContentView(layout.activity_player)
         initViews()
         mediaPlayer.preparePlayer(track.previewUrl)
-        interactor.setOnStateChangeListener { state ->
+        mediaPlayer.setOnStateChangeListener { state ->
             playButton.setOnClickListener {
                 playbackControl(state)
             }
@@ -78,7 +75,6 @@ class PlayerActivity : AppCompatActivity() {
         likeButton = findViewById(id.like_button)
         excerptDuration = findViewById(id.excerpt_duration)
         track = Gson().fromJson((intent.getStringExtra(TRACK)), Track::class.java)
-        mediaPlayer = PlayerInteractor(interactor)
         Glide.with(this)
             .load(track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"))
             .placeholder(drawable.ic_toast)
@@ -87,22 +83,23 @@ class PlayerActivity : AppCompatActivity() {
             .into(coverImage)
         trackName.text = track.trackName
         artistName.text = track.artistName
-        duration.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis.toLong())
+        if (track.trackTimeMillis?.isEmpty() == false) {
+            duration.text =
+                SimpleDateFormat(
+                    "mm:ss",
+                    Locale.getDefault()
+                ).format(track.trackTimeMillis!!.toLong())
+        } else duration.text = getString(string.time_null)
         albumName.text = track.collectionName
-        year.text = track.releaseDate.substring(0, 4)
+        track.releaseDate?.let { year.text = it.substring(0, 4) }
         genre.text = track.primaryGenreName
         country.text = track.country
         excerptDuration.text = getString(string.time_null)
-        trackName.text = track.trackName
-        artistName.text = track.artistName
-        if (track.collectionName.isNotEmpty()) {
+        if (track.collectionName?.isEmpty() == false) {
             albumName.text = track.collectionName
         } else {
             album.visibility = View.GONE
         }
-        year.text = track.releaseDate.substring(0, 4)
-        genre.text = track.primaryGenreName
-        country.text = track.country
     }
 
     private fun playbackControl(state: PlayerState) {
@@ -122,6 +119,11 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun updatePlayButton(imageResource: Int) {
         playButton.setImageResource(imageResource)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mediaPlayer.startPlayer()
     }
 
     override fun onPause() {

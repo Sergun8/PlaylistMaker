@@ -1,13 +1,12 @@
-package com.example.playlistmaker.Player.data
+package com.example.playlistmaker.player.data
 
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.Player.domain.PlayerInteractorRepository
-import com.example.playlistmaker.Player.domain.PlayerState
+import com.example.playlistmaker.player.domain.PlayerRepository
+import com.example.playlistmaker.player.domain.PlayerState
 
 
-
-class PlayerInteractorRepositoryImpl: PlayerInteractorRepository {
+class PlayerRepositoryImpl : PlayerRepository {
 
     private val mediaPlayer = MediaPlayer()
     private var stateCallback: ((PlayerState) -> Unit)? = null
@@ -37,9 +36,10 @@ class PlayerInteractorRepositoryImpl: PlayerInteractorRepository {
         mediaPlayer.release()
     }
 
-    override fun getPosition () = mediaPlayer.currentPosition.toLong()
+    override fun getPosition() = mediaPlayer.currentPosition.toLong()
 
     override fun setOnStateChangeListener(callback: (PlayerState) -> Unit) {
         stateCallback = callback
     }
+
 }

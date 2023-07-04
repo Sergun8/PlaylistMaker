@@ -1,10 +1,10 @@
-package com.example.playlistmaker.Player.domain
+package com.example.playlistmaker.player.domain
 
-interface PlayerInteractorRepository {
+interface PlayerRepository {
     fun preparePlayer(url: String)
     fun startPlayer()
     fun pausePlayer()
     fun release()
-    fun getPosition() : Long
+    fun getPosition(): Long
     fun setOnStateChangeListener(callback: (PlayerState) -> Unit)
 }
