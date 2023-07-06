@@ -1,5 +1,7 @@
 package com.example.playlistmaker
 
-class TrackResponse (
+import com.example.playlistmaker.player.domain.Track
+
+class TrackResponse(
     val results: ArrayList<Track>
 )
