@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.search.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -18,28 +18,22 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.player.domain.Track
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.search.domain.Track
 import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.google.gson.Gson
 import com.example.playlistmaker.player.presentation.PlayerActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playlistmaker.search.data.localStorage.SharedPreferencesClient
+import com.example.playlistmaker.search.viewModel.SearchViewModel
 
-@Suppress("UNUSED_EXPRESSION")
 class SearchActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: SearchViewModel
     private var countValue = ""
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(
-            GsonConverterFactory.create()
-        )
-        .build()
-    private val itunesService = retrofit.create(ItunesAPI::class.java)
+
     private val trackList = ArrayList<Track>()
     private val historyList = ArrayList<Track>()
     private lateinit var adapter: TrackAdapter
@@ -55,11 +49,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyView: LinearLayout
     private lateinit var rvHistoryList: RecyclerView
     private lateinit var clearHistory: Button
-    private lateinit var searchHistory: SearchHistory
+    private lateinit var searchHistory: SharedPreferencesClient
     private lateinit var yuoSearch: TextView
-
     private lateinit var progressBar: ProgressBar
-    private val searchRunnable = Runnable { search() }
+    private val interactor = Creator.provideSearchInteractor()
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
@@ -68,6 +61,23 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         initViews()
+        viewModel = ViewModelProvider(
+            this,
+            SearchViewModel.getViewModelFactory()
+        )[SearchViewModel::class.java]
+
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
+        if (savedInstanceState != null) {
+            searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
+        }
+
+        findViewById<RecyclerView?>(R.id.search_history_recycler_view).apply {
+            layoutManager = LinearLayoutManager(this.context)
+            adapter = searchHistoryAdapter
+        }
+
         val toolbarSearchActivity =
             findViewById<androidx.appcompat.widget.Toolbar>(R.id.search_toolbars)
         toolbarSearchActivity.setNavigationOnClickListener { finish() }
@@ -107,7 +117,7 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.addTextChangedListener(simpleTextWatcher)
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                search()
+                interactor.search()
                 false
             } else true
         }
@@ -130,17 +140,23 @@ class SearchActivity : AppCompatActivity() {
         historyView = findViewById(R.id.search_history)
         clearHistory = findViewById(R.id.clear_history)
         rvHistoryList = findViewById(R.id.history_search_list)
-        searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE))
+        searchHistory = SharedPreferencesClient(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE))
         yuoSearch = findViewById(R.id.you_searched)
 
         adapter = TrackAdapter {
-            addTrackHistory(it)
-            if (clickDebounce()) startPlayer(it)
+            if (clickDebounce()) {
+                viewModel.onTrackPressed(it)
+                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+                    .apply {
+                        putExtra(Track::class.java.simpleName, it)
+                    }
+                startActivity(displayIntent)
+            }
         }
         adapter.trackList = trackList
         rvTrack.adapter = adapter
         historyAdapter = TrackAdapter {
-            addTrackHistory(it)
+            interactor.addTrackHistory(it)
             startPlayer(it)
         }
         historyAdapter.trackList = historyList
@@ -176,7 +192,7 @@ class SearchActivity : AppCompatActivity() {
                 errorImage.setImageResource(R.drawable.ic_not_internet)
                 errorText.text = text
                 adapter.notifyDataSetChanged()
-                updateButton.setOnClickListener { search() }
+                updateButton.setOnClickListener { interactor.search() }
             }
             else -> {
                 errorImage.visibility = GONE
@@ -187,46 +203,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
-    private fun search() {
-
-        errorImage.visibility = GONE
-        errorText.visibility = GONE
-        updateButton.visibility = GONE
-        rvTrack.visibility = GONE
-        if (inputEditText.text.isNotEmpty()) {
-            progressBar.visibility = VISIBLE
-            itunesService.search(inputEditText.text.toString())
-                .enqueue(object : Callback<TrackResponse> {
-
-                    @SuppressLint("NotifyDataSetChanged")
-                    override fun onResponse(
-                        call: Call<TrackResponse>,
-                        response: Response<TrackResponse>
-                    ) {
-                        if (response.code() == 200) {
-                            rvTrack.visibility = VISIBLE
-                            errorImage.visibility = GONE
-                            errorText.visibility = GONE
-                            updateButton.visibility = GONE
-                            progressBar.visibility = GONE
-                            trackList.clear()
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                trackList.addAll(response.body()?.results!!)
-                                adapter.notifyDataSetChanged()
-                            } else {
-                                showMessage(notFound)
-                            }
-                        } else {
-                            showMessage(noConnection)
-                        }
-                    }
-
-                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                        showMessage(noConnection)
-                    }
-                })
-        }
-    }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -272,30 +248,7 @@ class SearchActivity : AppCompatActivity() {
         startActivity(displayIntent)
     }
 
-    private fun addTrackHistory(track: Track) = when {
-        historyList.contains(track) -> {
-            val position = historyList.indexOf(track)
-            historyList.remove(track)
-            rvHistoryList.adapter?.notifyItemRemoved(position)
-            rvHistoryList.adapter?.notifyItemRangeChanged(position, historyList.size)
-            historyList.add(0, track)
-            rvHistoryList.adapter?.notifyItemInserted(0)
-            rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
-        }
-        historyList.size < 10 -> {
-            historyList.add(0, track)
-            rvHistoryList.adapter?.notifyItemInserted(0)
-            rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
-        }
-        else -> {
-            historyList.removeAt(9)
-            rvHistoryList.adapter?.notifyItemRemoved(9)
-            rvHistoryList.adapter?.notifyItemRangeChanged(9, historyList.size)
-            historyList.add(0, track)
-            rvHistoryList.adapter?.notifyItemInserted(0)
-            rvHistoryList.adapter?.notifyItemRangeChanged(0, historyList.size)
-        }
-    }
+
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
@@ -307,8 +260,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        handler.removeCallbacks(interactor)
+        handler.postDelayed(interactor, SEARCH_DEBOUNCE_DELAY)
     }
 
     companion object {

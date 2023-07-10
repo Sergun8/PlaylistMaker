@@ -16,10 +16,10 @@ import com.example.playlistmaker.R.drawable
 import com.example.playlistmaker.R.id
 import com.example.playlistmaker.R.layout
 import com.example.playlistmaker.R.string
-import com.example.playlistmaker.SearchActivity.Companion.TRACK
-import com.example.playlistmaker.player.Creator
+import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.TRACK
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.player.domain.PlayerState
-import com.example.playlistmaker.player.domain.Track
+import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale

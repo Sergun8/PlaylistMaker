@@ -3,8 +3,8 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.SearchActivity.Companion.NIGHT_THEME
-import com.example.playlistmaker.SearchActivity.Companion.SHARED_PREFS
+import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.NIGHT_THEME
+import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.SHARED_PREFS
 
 
 class App : Application() {

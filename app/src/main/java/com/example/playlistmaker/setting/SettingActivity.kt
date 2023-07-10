@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.setting
 
 
 import android.annotation.SuppressLint
@@ -7,8 +7,10 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.LinearLayout
-import com.example.playlistmaker.SearchActivity.Companion.NIGHT_THEME
-import com.example.playlistmaker.SearchActivity.Companion.SHARED_PREFS
+import com.example.playlistmaker.App
+import com.example.playlistmaker.R
+import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.NIGHT_THEME
+import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.SHARED_PREFS
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 

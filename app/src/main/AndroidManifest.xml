@@ -23,21 +23,21 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".MediatecaActivity"
+            android:name=".mediateca.MediatecaActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".SearchActivity"
+            android:name=".search.ui.search.SearchActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".SettingActivity"
+            android:name=".setting.SettingActivity"
             android:exported="false"
             android:theme="@style/Theme.PlaylistMaker">
             <meta-data
@@ -45,7 +45,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker">
             <intent-filter>
