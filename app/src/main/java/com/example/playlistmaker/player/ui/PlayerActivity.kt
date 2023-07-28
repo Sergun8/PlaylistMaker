@@ -1,24 +1,24 @@
-package com.example.playlistmaker.player.presentation
+package com.example.playlistmaker.player.ui
 
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
 import com.example.playlistmaker.R.dimen
 import com.example.playlistmaker.R.drawable
 import com.example.playlistmaker.R.id
 import com.example.playlistmaker.R.layout
 import com.example.playlistmaker.R.string
-import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.TRACK
-import com.example.playlistmaker.Creator
 import com.example.playlistmaker.player.domain.PlayerState
+import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.TRACK
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
@@ -41,21 +41,35 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var playButton: ImageButton
     private lateinit var likeButton: ImageButton
     private lateinit var track: Track
-    private val mediaPlayer = Creator.providePlayerInteractor()
-    private val handler = Handler(Looper.getMainLooper())
-    private val setTimeRunnable = Runnable { setTime() }
+    //private val mediaPlayer = Creator.providePlayerInteractor()
+   // private val handler = Handler(Looper.getMainLooper())
+   // private val setTimeRunnable = Runnable { setTime() }
+   // private lateinit var viewModel: PlayerViewModel
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_player)
         initViews()
-        mediaPlayer.preparePlayer(track.previewUrl)
-        mediaPlayer.setOnStateChangeListener { state ->
+     /*   viewModel = ViewModelProvider(this) [PlayerViewModel::class.java]
+
+        viewModel.observePlayButtonState().observe(this) {
+            updatePlayButton(it)
+        }
+
+        viewModel.observePlayButtonEnabledState().observe(this) {
+            updatePlayButton(it)
+        }
+
+        viewModel.preparePlayer(track.previewUrl)
+
+        viewModel.setOnStateChangeListener { state ->
             playButton.setOnClickListener {
-                playbackControl(state)
+                viewModel.playbackControl(state)
             }
         }
+*/
+
     }
 
     private fun initViews() {
@@ -101,7 +115,7 @@ class PlayerActivity : AppCompatActivity() {
             album.visibility = View.GONE
         }
     }
-
+/*
     private fun playbackControl(state: PlayerState) {
         when (state) {
             PlayerState.STATE_PREPARED, PlayerState.STATE_COMPLETE, PlayerState.STATE_PAUSED -> {
@@ -117,34 +131,41 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatePlayButton(imageResource: Int) {
-        playButton.setImageResource(imageResource)
+
+ */
+
+    private fun changeState(state: PlayerState) {
+        if (state == PlayerState.STATE_PAUSED) {
+            playButton.setImageResource(drawable.ic_play_button)
+        }
+        if (state == PlayerState.STATE_PLAYING) {
+            playButton.setImageResource(drawable.ic_pause_button)
+        }
+        if (state == PlayerState.STATE_PREPARED) {
+            playButton.setImageResource(R.drawable.ic_play_button)
+            //currentTime.text = "00:00"
+        }
     }
+    private fun updatePlayButton(play: Boolean) {
+    if (play) {
+        playButton.setImageResource(drawable.ic_play_button)
+    } else  playButton.setImageResource(drawable.ic_pause_button)
+ }
 
     override fun onStart() {
         super.onStart()
-        mediaPlayer.startPlayer()
+      //  viewModel.onStart()
     }
 
     override fun onPause() {
         super.onPause()
-        mediaPlayer.pausePlayer()
+       // viewModel.pausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
-        handler.removeCallbacks(setTimeRunnable)
+       // viewModel.onDestroy()
     }
 
-    private fun setTime() {
-        excerptDuration.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.getPosition())
-        handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
-    }
-
-    companion object {
-        private const val SET_TIME_DELAY = 400L
-    }
 
 }

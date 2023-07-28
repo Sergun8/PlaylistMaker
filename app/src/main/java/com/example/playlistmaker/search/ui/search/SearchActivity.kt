@@ -1,16 +1,16 @@
 package com.example.playlistmaker.search.ui.search
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -20,20 +20,19 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.Track
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.google.gson.Gson
-import com.example.playlistmaker.player.presentation.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.data.localStorage.SharedPreferencesClient
+import com.example.playlistmaker.search.viewModel.ClearTextState
+import com.example.playlistmaker.search.viewModel.SearchState
 import com.example.playlistmaker.search.viewModel.SearchViewModel
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SearchViewModel
     private var countValue = ""
-
     private val trackList = ArrayList<Track>()
     private val historyList = ArrayList<Track>()
     private lateinit var adapter: TrackAdapter
@@ -42,7 +41,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var rvTrack: RecyclerView
     private lateinit var clearButton: ImageView
     private lateinit var notFound: String
-    private lateinit var noConnection: String
+    lateinit var noConnection: String
     private lateinit var updateButton: Button
     private lateinit var errorImage: ImageView
     private lateinit var errorText: TextView
@@ -52,9 +51,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistory: SharedPreferencesClient
     private lateinit var yuoSearch: TextView
     private lateinit var progressBar: ProgressBar
-    private val interactor = Creator.provideSearchInteractor()
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
+    private lateinit var viewModel: SearchViewModel
+    private lateinit var binding: ActivitySearchBinding
 
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,64 +70,46 @@ class SearchActivity : AppCompatActivity() {
             render(it)
         }
         if (savedInstanceState != null) {
-            searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
+            inputEditText.text = savedInstanceState.getCharSequence(SEARCH_VALUE) as Editable
         }
 
-        findViewById<RecyclerView?>(R.id.search_history_recycler_view).apply {
-            layoutManager = LinearLayoutManager(this.context)
-            adapter = searchHistoryAdapter
+        findViewById<RecyclerView?>(R.id.history_search_list).apply {
+            adapter = historyAdapter
         }
 
         val toolbarSearchActivity =
             findViewById<androidx.appcompat.widget.Toolbar>(R.id.search_toolbars)
         toolbarSearchActivity.setNavigationOnClickListener { finish() }
-        clearButton.setOnClickListener {
-            inputEditText.setText("")
-            hideKeyboard(currentFocus ?: View(this))
-            trackList.clear()
-            errorImage.visibility = GONE
-            errorText.visibility = GONE
-            updateButton.visibility = GONE
-            adapter.notifyDataSetChanged()
-        }
-        val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = clearButtonVisibility(s)
-
-                searchDebounce()
-                if (inputEditText.text.isEmpty()) {
-                    errorImage.visibility = GONE
-                    errorText.visibility = GONE
-                    updateButton.visibility = GONE
-                    rvTrack.visibility = GONE
-                    historyView.visibility = VISIBLE
-                } else historyView.visibility = GONE
-
-                clearHistory.visibility =
-                    if (historyList.isEmpty()) GONE
-                    else VISIBLE
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        }
         inputEditText.addTextChangedListener(simpleTextWatcher)
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                interactor.search()
-                false
-            } else true
+
+        viewModel.observeClearTextState().observe(this) { clearTextState ->
+            if (clearTextState is ClearTextState.ClearText) {
+                clearSearchText()
+                hideKeyboard()
+                viewModel.textCleared()
+            }
         }
-        historyList.addAll(searchHistory.readHistory())
+
+        clearButton.setOnClickListener {
+            viewModel.onClearTextPressed()
+        }
+
+        updateButton.setOnClickListener {
+            viewModel.onRefreshSearchButtonPressed(countValue)
+        }
+
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            historyListVisibility(hasFocus && inputEditText.text.isEmpty() && historyList.isNotEmpty())
+            viewModel.onFocusChanged(hasFocus, inputEditText.text.toString())
+        }
+
+        clearHistory.setOnClickListener {
+            viewModel.onClearSearchHistoryPressed()
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+
+    @SuppressLint("NotifyDataSetChanged", "CutPasteId")
     private fun initViews() {
         inputEditText = findViewById(R.id.editTextSearch)
         clearButton = findViewById(R.id.clearIcon)
@@ -140,7 +122,6 @@ class SearchActivity : AppCompatActivity() {
         historyView = findViewById(R.id.search_history)
         clearHistory = findViewById(R.id.clear_history)
         rvHistoryList = findViewById(R.id.history_search_list)
-        searchHistory = SharedPreferencesClient(getSharedPreferences(SHARED_PREFS, MODE_PRIVATE))
         yuoSearch = findViewById(R.id.you_searched)
 
         adapter = TrackAdapter {
@@ -148,69 +129,139 @@ class SearchActivity : AppCompatActivity() {
                 viewModel.onTrackPressed(it)
                 val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
                     .apply {
-                        putExtra(Track::class.java.simpleName, it)
+                        putExtra(TRACK, Gson().toJson(it))
                     }
                 startActivity(displayIntent)
             }
         }
+        historyAdapter = TrackAdapter {
+            if (clickDebounce()) {
+                viewModel.onTrackPressed(it)
+                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+                    .apply {
+                        putExtra(TRACK, Gson().toJson(it))
+                    }
+
+                startActivity(displayIntent)
+            }
+
+
+        }
+
+
+
+
+
+
         adapter.trackList = trackList
         rvTrack.adapter = adapter
-        historyAdapter = TrackAdapter {
-            interactor.addTrackHistory(it)
-            startPlayer(it)
-        }
         historyAdapter.trackList = historyList
         rvHistoryList.adapter = historyAdapter
-        clearHistory.setOnClickListener {
-            historyList.clear()
-            rvHistoryList.adapter?.notifyDataSetChanged()
-            historyListVisibility(historyList.isNotEmpty())
-        }
+
         progressBar = findViewById(R.id.progressBar)
 
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun showMessage(text: String) {
+    private val simpleTextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            viewModel.onTextChanged(s.toString() ?: "")
+        }
+
+        override fun afterTextChanged(editable: Editable?) {
+            if (inputEditText.text.isEmpty()) {
+                render(SearchState.HistoryContent(historyList))
+            } else {
+                historyView.visibility = GONE
+                clearButton.visibility = VISIBLE
+            }
+
+            clearHistory.visibility =
+                if (historyList.isEmpty()) GONE
+                else VISIBLE
+        }
+    }
+
+    private fun render(state: SearchState) {
+        when (state) {
+            is SearchState.Loading -> showLoading()
+            is SearchState.SearchContent -> showSearchResult(state.tracks)
+            is SearchState.HistoryContent -> historyListVisibility(state.tracks)
+            is SearchState.EmptySearch -> showNotFound()
+            is SearchState.Error -> showNotConnected()
+            is SearchState.EmptyScreen -> showEmptyScreen()
+        }
+    }
+
+    private fun showLoading() {
+        progressBar.visibility = VISIBLE
+    }
+
+    private fun hideKeyboard() {
+        val inputMethodManager =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
+    }
+
+    private fun showEmptyScreen() {
+        rvTrack.visibility = GONE
+        rvHistoryList.visibility = GONE
         progressBar.visibility = GONE
-        when (text) {
-            notFound -> {
-                errorImage.visibility = VISIBLE
-                errorText.visibility = VISIBLE
-                updateButton.visibility = GONE
-                trackList.clear()
-                errorImage.setImageResource(R.drawable.ic_nothing_found)
-                errorText.text = text
-                adapter.notifyDataSetChanged()
-            }
-            noConnection -> {
-                errorImage.visibility = VISIBLE
-                errorText.visibility = VISIBLE
-                updateButton.visibility = VISIBLE
-                trackList.clear()
-                rvTrack.visibility = GONE
-                errorImage.setImageResource(R.drawable.ic_not_internet)
-                errorText.text = text
-                adapter.notifyDataSetChanged()
-                updateButton.setOnClickListener { interactor.search() }
-            }
-            else -> {
-                errorImage.visibility = GONE
-                errorText.visibility = GONE
-                updateButton.visibility = GONE
-            }
-        }
+        errorImage.visibility = GONE
+        errorText.visibility = GONE
+        updateButton.visibility = GONE
+        historyView.visibility = GONE
+        clearHistory.visibility = GONE
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showSearchResult(tracks: List<Track>) {
+        showEmptyScreen()
+        rvTrack.visibility = VISIBLE
+        trackList.clear()
+        trackList.addAll(tracks)
+        adapter.trackList = trackList
+        adapter.notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun historyListVisibility(searchHistory: List<Track>) {
+        showEmptyScreen()
+        rvHistoryList.visibility = VISIBLE
+        historyView.visibility = VISIBLE
+        yuoSearch.visibility = VISIBLE
+        clearHistory.visibility = VISIBLE
+        historyAdapter.trackList = searchHistory as ArrayList<Track>
+        historyAdapter.notifyDataSetChanged()
     }
 
 
 
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            GONE
-        } else {
-            VISIBLE
-        }
+    private fun showNotFound() {
+        showEmptyScreen()
+        errorText.text = getString(R.string.nothing_was_found)
+        errorText.visibility = VISIBLE
+        errorImage.visibility = VISIBLE
+        errorImage.setImageResource(R.drawable.ic_nothing_found)
+        progressBar.visibility = GONE
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showNotConnected() {
+        showEmptyScreen()
+        errorImage.visibility = VISIBLE
+        errorText.visibility = VISIBLE
+        updateButton.visibility = VISIBLE
+        errorImage.setImageResource(R.drawable.ic_not_internet)
+        errorText.text = noConnection
+        adapter.trackList.clear()
+        adapter.notifyDataSetChanged()
+        updateButton.setOnClickListener { viewModel.onRefreshSearchButtonPressed(inputEditText.text.toString()) }
+
+    }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -222,33 +273,15 @@ class SearchActivity : AppCompatActivity() {
         countValue = savedInstanceState.getString(SEARCH_VALUE, "")
     }
 
-    private fun historyListVisibility(yes: Boolean) {
-        if (yes) {
-            yuoSearch.visibility = VISIBLE
-            historyView.visibility = VISIBLE
-            errorImage.visibility = GONE
-            errorText.visibility = GONE
-            updateButton.visibility = GONE
-        } else {
-            historyView.visibility = GONE
-            yuoSearch.visibility = GONE
-        }
-    }
-
     override fun onStop() {
         super.onStop()
-        searchHistory.saveHistory(historyList)
+        viewModel.onCleared()
     }
 
-    private fun startPlayer(track: Track) {
-        val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
-            .apply {
-                putExtra(TRACK, Gson().toJson(track))
-            }
-        startActivity(displayIntent)
+    private fun clearSearchText() {
+        inputEditText.text.clear()
+        clearButton.visibility = GONE
     }
-
-
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
@@ -259,17 +292,11 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
-    private fun searchDebounce() {
-        handler.removeCallbacks(interactor)
-        handler.postDelayed(interactor, SEARCH_DEBOUNCE_DELAY)
-    }
-
     companion object {
         const val SEARCH_VALUE = "SEARCH_VALUE"
         const val SHARED_PREFS = "SHARED_PREFS"
         const val NIGHT_THEME = "NIGHT_THEME"
         const val TRACK = "TRACK"
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
         const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

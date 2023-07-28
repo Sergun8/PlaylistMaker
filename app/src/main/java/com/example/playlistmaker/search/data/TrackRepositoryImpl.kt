@@ -1,26 +1,25 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.Resource
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import com.example.playlistmaker.search.data.dto.TrackSearchResponse
-import com.example.playlistmaker.search.data.localStorage.SharedPreferencesClient
+import com.example.playlistmaker.search.data.localStorage.HistoryRepository
 import com.example.playlistmaker.search.domain.api.TrackRepository
-import com.example.playlistmaker.utils.Resource
 
 
 class TrackRepositoryImpl(
-    private val networkClient: NetworkClient,
-    private val sharedPreferencesClient: SharedPreferencesClient
+    private val networkClient: NetworkClient, private val historyRepository: HistoryRepository
 ) : TrackRepository {
 
     override fun search (expression: String): Resource<List<Track>> {
         val response = networkClient.doRequest(TrackSearchRequest(expression))
         return when (response.resultCode) {
-            NO_CONNECTIVITY_ERROR -> {
+            -1 -> {
                 Resource.Error(NO_CONNECTIVITY_MESSAGE)
             }
 
-            SUCCESSFUL_SEARCH_CODE -> {
+            200 -> {
                 Resource.Success((response as TrackSearchResponse).results.map {
                     Track(
                         it.trackId,
@@ -40,31 +39,27 @@ class TrackRepositoryImpl(
             else -> {
                 Resource.Error(SERVER_ERROR_MESSAGE)
             }
+
         }
-
-
     }
 
     override fun readHistory(): ArrayList<Track> {
-        return sharedPreferencesClient.readHistory()
+        return historyRepository.read()
     }
 
     override fun clearHistory() {
-        sharedPreferencesClient.clearHistory()
+        historyRepository.clear()
     }
-
 
     override fun addTrackHistory(track: Track) {
-        sharedPreferencesClient.addTrackHistory(track)
+        historyRepository.write(track)
     }
 
-
     companion object {
-        const val SUCCESSFUL_SEARCH_CODE = 200
-        const val NO_CONNECTIVITY_ERROR = -1
         const val NO_CONNECTIVITY_MESSAGE =
             "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
         const val SERVER_ERROR_MESSAGE = "Ошибка сервера"
     }
+
 }
 

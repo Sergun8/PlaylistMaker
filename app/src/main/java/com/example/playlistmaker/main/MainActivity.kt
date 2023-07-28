@@ -8,7 +8,7 @@ import android.widget.Button
 import com.example.playlistmaker.mediateca.MediatecaActivity
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.ui.search.SearchActivity
-import com.example.playlistmaker.setting.SettingActivity
+import com.example.playlistmaker.setting.ui.activity.SettingActivity
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {

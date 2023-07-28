@@ -7,8 +7,8 @@ import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.NIGHT
 import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.SHARED_PREFS
 
 
-class App : Application() {
-
+//class App : Application() {}
+/*
     var darkTheme = false
 
     private lateinit var sharedPrefs: SharedPreferences
@@ -50,3 +50,4 @@ class App : Application() {
             .apply()
     }
 }
+*/

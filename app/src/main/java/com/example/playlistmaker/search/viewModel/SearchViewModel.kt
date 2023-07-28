@@ -10,20 +10,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.App
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.api.SearchInteractor
 
 
 class SearchViewModel(
-    application: App
+    application: Application
 ) : AndroidViewModel(application) {
 
-    private val interactor = Creator.provideSearchInteractor()
-    private val handler = android.os.Handler(Looper.getMainLooper())
 
+    private val interactor = Creator.provideSearchInteractor(application)
+    private val handler = android.os.Handler(Looper.getMainLooper())
     private val stateLiveData = MutableLiveData<SearchState>()
     fun observeState(): LiveData<SearchState> = stateLiveData
     private fun renderState(state: SearchState) {
@@ -38,9 +36,11 @@ class SearchViewModel(
 
     fun onClearTextPressed() {
         clearTextState.value = ClearTextState.ClearText
+        renderState(SearchState.HistoryContent(interactor.readHistory()))
     }
 
     public override fun onCleared() {
+        super.onCleared()
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
@@ -75,7 +75,7 @@ class SearchViewModel(
         }
     }
 
-    private fun searchDebounce(changedText: String) {
+   private fun searchDebounce(changedText: String) {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
         val searchRunnable = Runnable { searchRequest(changedText) }
 
@@ -83,30 +83,32 @@ class SearchViewModel(
         handler.postAtTime(
             searchRunnable,
             SEARCH_REQUEST_TOKEN,
-            postTime,
+            postTime
         )
     }
 
+
     private fun searchRequest(searchText: String) {
+
         if (searchText.isNotEmpty()) {
             renderState(SearchState.Loading)
+
             interactor.search(searchText, object : SearchInteractor.TrackConsumer {
                 override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                    if (foundTracks != null) {
-                        if (foundTracks.isNotEmpty()) {
-                            renderState(SearchState.SearchContent(foundTracks))
-                        } else {
+                    when {
+                        errorMessage != null -> {
+                            renderState(SearchState.Error)
+                        }
+                        foundTracks.isNullOrEmpty() -> {
+                            renderState(SearchState.EmptySearch)
+                        }
+                        else -> {
                             renderState(
-                                SearchState.EmptySearch(
-                                    getApplication<Application>().getString(
-                                        R.string.nothing_was_found
-                                    )
+                                SearchState.SearchContent(
+                                    tracks =  foundTracks
                                 )
                             )
                         }
-                    }
-                    if (errorMessage != null) {
-                        renderState(SearchState.Error(errorMessage))
                     }
                 }
             })
@@ -119,8 +121,9 @@ class SearchViewModel(
 
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                SearchViewModel(this[APPLICATION_KEY] as App)
+                SearchViewModel(this[APPLICATION_KEY] as Application)
             }
         }
+
     }
 }
