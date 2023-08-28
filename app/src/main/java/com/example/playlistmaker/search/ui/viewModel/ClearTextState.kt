@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.viewModel
+package com.example.playlistmaker.search.ui.viewModel
 
 sealed interface ClearTextState {
     object None : ClearTextState

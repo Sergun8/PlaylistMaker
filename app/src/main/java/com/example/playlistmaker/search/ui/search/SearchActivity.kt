@@ -21,14 +21,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 import com.example.playlistmaker.player.ui.PlayerActivity
-import com.example.playlistmaker.search.data.localStorage.SharedPreferencesClient
-import com.example.playlistmaker.search.viewModel.ClearTextState
-import com.example.playlistmaker.search.viewModel.SearchState
-import com.example.playlistmaker.search.viewModel.SearchViewModel
+import com.example.playlistmaker.search.ui.viewModel.ClearTextState
+import com.example.playlistmaker.search.ui.viewModel.SearchState
+import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -41,20 +39,18 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var rvTrack: RecyclerView
     private lateinit var clearButton: ImageView
     private lateinit var notFound: String
-    lateinit var noConnection: String
+    private lateinit var noConnection: String
     private lateinit var updateButton: Button
     private lateinit var errorImage: ImageView
     private lateinit var errorText: TextView
     private lateinit var historyView: LinearLayout
     private lateinit var rvHistoryList: RecyclerView
     private lateinit var clearHistory: Button
-    private lateinit var searchHistory: SharedPreferencesClient
     private lateinit var yuoSearch: TextView
     private lateinit var progressBar: ProgressBar
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private lateinit var viewModel: SearchViewModel
-    private lateinit var binding: ActivitySearchBinding
 
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,9 +64,6 @@ class SearchActivity : AppCompatActivity() {
 
         viewModel.observeState().observe(this) {
             render(it)
-        }
-        if (savedInstanceState != null) {
-            inputEditText.text = savedInstanceState.getCharSequence(SEARCH_VALUE) as Editable
         }
 
         findViewById<RecyclerView?>(R.id.history_search_list).apply {
@@ -148,16 +141,10 @@ class SearchActivity : AppCompatActivity() {
 
         }
 
-
-
-
-
-
         adapter.trackList = trackList
         rvTrack.adapter = adapter
         historyAdapter.trackList = historyList
         rvHistoryList.adapter = historyAdapter
-
         progressBar = findViewById(R.id.progressBar)
 
     }
@@ -167,7 +154,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            viewModel.onTextChanged(s.toString() ?: "")
+            viewModel.onTextChanged(s.toString())
         }
 
         override fun afterTextChanged(editable: Editable?) {
@@ -237,8 +224,6 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter.notifyDataSetChanged()
     }
 
-
-
     private fun showNotFound() {
         showEmptyScreen()
         errorText.text = getString(R.string.nothing_was_found)
@@ -261,7 +246,6 @@ class SearchActivity : AppCompatActivity() {
         updateButton.setOnClickListener { viewModel.onRefreshSearchButtonPressed(inputEditText.text.toString()) }
 
     }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -294,8 +278,6 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val SEARCH_VALUE = "SEARCH_VALUE"
-        const val SHARED_PREFS = "SHARED_PREFS"
-        const val NIGHT_THEME = "NIGHT_THEME"
         const val TRACK = "TRACK"
         const val CLICK_DEBOUNCE_DELAY = 1000L
     }

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.viewModel
+package com.example.playlistmaker.search.ui.viewModel
 
 import android.app.Application
 import android.os.Looper
@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.api.SearchInteractor
 
 
@@ -105,7 +105,7 @@ class SearchViewModel(
                         else -> {
                             renderState(
                                 SearchState.SearchContent(
-                                    tracks =  foundTracks
+                                    tracks = foundTracks
                                 )
                             )
                         }

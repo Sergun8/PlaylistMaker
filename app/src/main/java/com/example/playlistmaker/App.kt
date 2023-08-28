@@ -1,53 +1,31 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.NIGHT_THEME
-import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.SHARED_PREFS
+import com.example.playlistmaker.Creator.provideSettingsInteractor
+import com.example.playlistmaker.setting.domain.ThemeSettings
 
 
-//class App : Application() {}
-/*
-    var darkTheme = false
-
-    private lateinit var sharedPrefs: SharedPreferences
+class App : Application() {
 
     override fun onCreate() {
+
+
+        val settingsInteractor = provideSettingsInteractor(applicationContext)
+        darkMode(settingsInteractor.getThemeSettings())
+
         super.onCreate()
-
-        sharedPrefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        darkTheme = sharedPrefs.getBoolean(NIGHT_THEME, false)
-        switchTheme(darkTheme)
-
-
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkTheme) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
     }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
-
-        darkTheme = darkThemeEnabled
-
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
+    private fun darkMode(isDarkMode: ThemeSettings) {
+        if (isDarkMode.darkThemeEnabled) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 
-    fun saveTheme(darkThemeEnabled: Boolean) {
-        sharedPrefs
-            .edit()
-            .putBoolean(NIGHT_THEME , darkThemeEnabled)
-            .apply()
-    }
 }
-*/
+
+
+

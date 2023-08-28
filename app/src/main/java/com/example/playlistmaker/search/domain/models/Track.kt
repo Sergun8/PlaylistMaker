@@ -1,7 +1,4 @@
-package com.example.playlistmaker.search.domain
-
-import android.os.Parcelable
-
+package com.example.playlistmaker.search.domain.models
 
 data class Track (
     val trackId: String,

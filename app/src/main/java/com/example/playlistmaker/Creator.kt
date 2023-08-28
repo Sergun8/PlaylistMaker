@@ -7,7 +7,6 @@ import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractorImpl
 import com.example.playlistmaker.player.domain.PlayerRepository
-import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.TrackRepositoryImpl
 import com.example.playlistmaker.search.data.localStorage.HistoryRepository
 import com.example.playlistmaker.search.data.localStorage.SharedPreferencesClient
@@ -15,7 +14,6 @@ import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.domain.api.SearchInteractor
 import com.example.playlistmaker.search.domain.api.TrackRepository
 import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
-import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.SHARED_PREFS
 import com.example.playlistmaker.setting.data.SettingsRepositoryImpl
 import com.example.playlistmaker.setting.data.SettingsRepositoryImpl.Companion.DARK_THEME_ENABLED
 import com.example.playlistmaker.setting.data.sharing.ExternalNavigatorImpl
@@ -28,8 +26,9 @@ import com.example.playlistmaker.setting.domain.sharing.impl.SharingInteractorIm
 
 
 object Creator {
-
     private const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
+
+
     private fun getPlayerRepository(): PlayerRepository {
         return PlayerRepositoryImpl()
     }

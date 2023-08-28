@@ -2,7 +2,7 @@ package com.example.playlistmaker.search.domain.impl
 
 
 import com.example.playlistmaker.Resource
-import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.api.SearchInteractor
 import com.example.playlistmaker.search.domain.api.TrackRepository
 import java.util.concurrent.Executors
@@ -30,10 +30,6 @@ class TrackInteractorImpl(private val repository: TrackRepository) : SearchInter
         return repository.readHistory()
     }
 
-    /*  override fun saveHistory(track: Track) {
-          repository.SaveHistory(track)
-      }
-  */
     override fun clearHistory() {
         repository.clearHistory()
     }
