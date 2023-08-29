@@ -1,26 +1,26 @@
 package com.example.playlistmaker.search.ui.viewModel
 
-import android.app.Application
+
 import android.os.Looper
 import android.os.SystemClock
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.App
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.api.SearchInteractor
+import com.example.playlistmaker.search.domain.models.ErrorNetwork
 
 
 class SearchViewModel(
-    application: Application
-) : AndroidViewModel(application) {
+    private val interactor: SearchInteractor
+) : ViewModel() {
 
-
-    private val interactor = Creator.provideSearchInteractor(application)
     private val handler = android.os.Handler(Looper.getMainLooper())
     private val stateLiveData = MutableLiveData<SearchState>()
     fun observeState(): LiveData<SearchState> = stateLiveData
@@ -94,7 +94,7 @@ class SearchViewModel(
             renderState(SearchState.Loading)
 
             interactor.search(searchText, object : SearchInteractor.TrackConsumer {
-                override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
+                override fun consume(foundTracks: List<Track>?, errorMessage: ErrorNetwork?) {
                     when {
                         errorMessage != null -> {
                             renderState(SearchState.Error)
@@ -121,7 +121,7 @@ class SearchViewModel(
 
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                SearchViewModel(this[APPLICATION_KEY] as Application)
+                SearchViewModel(Creator.provideSearchInteractor(this[APPLICATION_KEY] as App))
             }
         }
 
