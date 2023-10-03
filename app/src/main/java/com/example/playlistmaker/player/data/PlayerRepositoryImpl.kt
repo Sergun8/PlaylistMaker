@@ -6,7 +6,7 @@ import com.example.playlistmaker.player.domain.PlayerRepository
 import com.example.playlistmaker.player.domain.PlayerState
 
 
-class   PlayerRepositoryImpl : PlayerRepository {
+class PlayerRepositoryImpl : PlayerRepository {
 
     private val mediaPlayer = MediaPlayer()
     private var stateCallback: ((PlayerState) -> Unit)? = null
@@ -21,17 +21,21 @@ class   PlayerRepositoryImpl : PlayerRepository {
             stateCallback?.invoke(PlayerState.STATE_COMPLETE)
         }
     }
+
     override fun startPlayer() {
         mediaPlayer.start()
         stateCallback?.invoke(PlayerState.STATE_PLAYING)
     }
+
     override fun pausePlayer() {
         mediaPlayer.pause()
         stateCallback?.invoke(PlayerState.STATE_PAUSED)
     }
+
     override fun release() {
         mediaPlayer.release()
     }
+
     override fun getPosition() = mediaPlayer.currentPosition.toLong()
 
     override fun setOnStateChangeListener(callback: (PlayerState) -> Unit) {

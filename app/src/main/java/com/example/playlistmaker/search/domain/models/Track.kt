@@ -9,7 +9,7 @@ data class Track (
     val collectionName: String?,
     val country: String,
     val primaryGenreName: String,
-    val releaseDate: String?,
+    val releaseDate: String,
     val previewUrl: String
 )
 

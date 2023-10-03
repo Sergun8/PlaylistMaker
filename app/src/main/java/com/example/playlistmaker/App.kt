@@ -1,30 +1,28 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.Creator.provideSettingsInteractor
-import com.example.playlistmaker.setting.domain.ThemeSettings
-
+import com.example.playlistmaker.DI.PlayerModule
+import com.example.playlistmaker.DI.SearchModule
+import com.example.playlistmaker.DI.SettingModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext.startKoin
 
 class App : Application() {
 
     override fun onCreate() {
 
-
-        val settingsInteractor = provideSettingsInteractor(applicationContext)
-        darkMode(settingsInteractor.getThemeSettings())
-
         super.onCreate()
-    }
-
-    private fun darkMode(isDarkMode: ThemeSettings) {
-        if (isDarkMode.darkThemeEnabled) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        startKoin {
+            androidLogger(org.koin.core.logger.Level.DEBUG)
+            androidContext(this@App)
+            modules(
+                SettingModule,
+                SearchModule,
+                PlayerModule
+            )
         }
     }
-
 }
 
 

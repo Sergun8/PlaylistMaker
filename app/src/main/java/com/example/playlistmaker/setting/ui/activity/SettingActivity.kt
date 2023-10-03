@@ -5,11 +5,10 @@ package com.example.playlistmaker.setting.ui.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.LinearLayout
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.setting.ui.viewModel.SettingsViewModel
 import com.google.android.material.switchmaterial.SwitchMaterial
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,14 +18,7 @@ class SettingActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.settings_toolbars)
         toolbar.setNavigationOnClickListener { finish() }
 
-        val viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel
-                .getViewModelFactory(
-                    Creator.provideSharingInteractor(application.applicationContext),
-                    Creator.provideSettingsInteractor(application.applicationContext)
-                )
-        )[SettingsViewModel::class.java]
+        val viewModel by viewModel<SettingsViewModel>()
 
         val themeSwitchDark = findViewById<SwitchMaterial>(R.id.switch_darck)
         val clickAgreement = findViewById<LinearLayout>(R.id.buttom_agreement)

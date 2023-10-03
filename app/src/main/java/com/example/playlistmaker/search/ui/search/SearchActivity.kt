@@ -18,7 +18,6 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.models.Track
@@ -27,6 +26,7 @@ import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.ui.viewModel.ClearTextState
 import com.example.playlistmaker.search.ui.viewModel.SearchState
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -50,17 +50,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
-    private lateinit var viewModel: SearchViewModel
+
+    private val viewModel: SearchViewModel by viewModel()
 
     @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         initViews()
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
+
 
         viewModel.observeState().observe(this) {
             render(it)
@@ -116,7 +114,7 @@ class SearchActivity : AppCompatActivity() {
         clearHistory = findViewById(R.id.clear_history)
         rvHistoryList = findViewById(R.id.history_search_list)
         yuoSearch = findViewById(R.id.you_searched)
-
+        progressBar = findViewById(R.id.progressBar)
         adapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
@@ -145,7 +143,7 @@ class SearchActivity : AppCompatActivity() {
         rvTrack.adapter = adapter
         historyAdapter.trackList = historyList
         rvHistoryList.adapter = historyAdapter
-        progressBar = findViewById(R.id.progressBar)
+
 
     }
 
