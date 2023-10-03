@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:autofillHints="@string/Setting"
     android:orientation="vertical"
-    tools:context=".SearchActivity">
+    tools:context=".search.ui.search.SearchActivity">
 
 
     <androidx.appcompat.widget.Toolbar
