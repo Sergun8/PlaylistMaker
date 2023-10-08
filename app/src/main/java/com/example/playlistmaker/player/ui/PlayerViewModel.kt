@@ -1,6 +1,6 @@
 package com.example.playlistmaker.player.ui
 
-import android.annotation.SuppressLint
+
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
@@ -15,42 +15,49 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
 
 
     private val handler = Handler(Looper.getMainLooper())
+
     private val playState = MutableLiveData<PlayerState>()
     fun observePlayState(): LiveData<PlayerState> = playState
 
     private val durationState = MutableLiveData<String>()
     fun observeDurationState(): LiveData<String> = durationState
 
+    private val setTimeRunnable = Runnable { setTime() }
 
-    @SuppressLint("StaticFieldLeak")
-
-    val setTimeRunnable = Runnable { setTime() }
-
-    fun playbackControl(state: PlayerState) {
-        when (state) {
-            PlayerState.STATE_PREPARED, PlayerState.STATE_COMPLETE, PlayerState.STATE_PAUSED -> {
-                mediaPlayerInteractor.startPlayer()
-                playState.postValue(PlayerState.STATE_PLAYING)
-                handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+    fun playbackControl() {
+        when (playState.value) {
+            PlayerState.STATE_PREPARED, PlayerState.STATE_PAUSED, PlayerState.STATE_COMPLETE -> {
+                onStart()
             }
+
             PlayerState.STATE_PLAYING -> {
-                mediaPlayerInteractor.pausePlayer()
-                playState.postValue(PlayerState.STATE_PAUSED)
-                handler.removeCallbacks(setTimeRunnable)
+                onPause()
             }
+
+            null -> return
         }
     }
 
     fun preparePlayer(previewUrl: String) {
         mediaPlayerInteractor.preparePlayer(previewUrl)
+        updatePlayerState()
+    }
+
+    fun updatePlayerState() {
+        mediaPlayerInteractor.setOnStateChangeListener { state ->
+            playState.value = state
+        }
     }
 
     fun onStart() {
         mediaPlayerInteractor.startPlayer()
+        updatePlayerState()
+        handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
     }
 
     fun onPause() {
         mediaPlayerInteractor.pausePlayer()
+        updatePlayerState()
         handler.removeCallbacksAndMessages(null)
     }
 

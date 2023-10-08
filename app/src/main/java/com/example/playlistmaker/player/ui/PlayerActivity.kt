@@ -50,17 +50,14 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.preparePlayer(track.previewUrl)
 
         viewModel.observePlayState().observe(this) {
-            playbackControl(it)
+            render(it)
         }
-
         viewModel.observeDurationState().observe(this) {
             excerptDuration.text = it
         }
 
-        viewModel.mediaPlayerInteractor.setOnStateChangeListener { state ->
-            playButton.setOnClickListener {
-                viewModel.playbackControl(state)
-            }
+        playButton.setOnClickListener {
+            viewModel.playbackControl()
         }
 
     }
@@ -111,12 +108,15 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun playbackControl(state: PlayerState) {
+    private fun render(state: PlayerState) {
         when (state) {
-            PlayerState.STATE_PREPARED, PlayerState.STATE_COMPLETE, PlayerState.STATE_PAUSED -> {
+            PlayerState.STATE_PREPARED, PlayerState.STATE_PAUSED -> {
                 playButton.setImageResource(drawable.ic_play_button)
             }
-
+            PlayerState.STATE_COMPLETE -> {
+                playButton.setImageResource(drawable.ic_play_button)
+                excerptDuration.text = getString(string.time_null)
+            }
             PlayerState.STATE_PLAYING -> {
                 playButton.setImageResource(drawable.ic_pause_button)
             }
@@ -137,4 +137,5 @@ class PlayerActivity : AppCompatActivity() {
         super.onDestroy()
         viewModel.onDestroy()
     }
+
 }

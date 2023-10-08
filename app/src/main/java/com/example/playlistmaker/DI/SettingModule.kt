@@ -31,7 +31,7 @@ val SettingModule  = module{
         androidContext().getSharedPreferences(SettingsRepositoryImpl.DARK_THEME_ENABLED, Context.MODE_PRIVATE)
     }
 
-    viewModel<SettingsViewModel> {
+    viewModel {
         SettingsViewModel(sharingInteractor = get(), settingsInteractor = get())
     }
 }

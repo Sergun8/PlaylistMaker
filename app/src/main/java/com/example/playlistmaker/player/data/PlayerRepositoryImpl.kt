@@ -6,9 +6,8 @@ import com.example.playlistmaker.player.domain.PlayerRepository
 import com.example.playlistmaker.player.domain.PlayerState
 
 
-class PlayerRepositoryImpl : PlayerRepository {
+class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerRepository {
 
-    private val mediaPlayer = MediaPlayer()
     private var stateCallback: ((PlayerState) -> Unit)? = null
 
     override fun preparePlayer(url: String) {
@@ -38,7 +37,7 @@ class PlayerRepositoryImpl : PlayerRepository {
 
     override fun getPosition() = mediaPlayer.currentPosition.toLong()
 
-    override fun setOnStateChangeListener(callback: (PlayerState) -> Unit) {
+    override fun setOnStateChangeListener(callback: (PlayerState?) -> Unit) {
         stateCallback = callback
     }
 }
