@@ -1,6 +1,6 @@
 package com.example.playlistmaker.player.ui
 
-
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
@@ -13,27 +13,27 @@ import java.util.Locale
 
 class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel() {
 
-
     private val handler = Handler(Looper.getMainLooper())
-
+    private var isPlayerCreated = false
     private val playState = MutableLiveData<PlayerState>()
     fun observePlayState(): LiveData<PlayerState> = playState
 
     private val durationState = MutableLiveData<String>()
     fun observeDurationState(): LiveData<String> = durationState
 
-    private val setTimeRunnable = Runnable { setTime() }
+
+    @SuppressLint("StaticFieldLeak")
+
+    val setTimeRunnable = Runnable { setTime() }
 
     fun playbackControl() {
         when (playState.value) {
             PlayerState.STATE_PREPARED, PlayerState.STATE_PAUSED, PlayerState.STATE_COMPLETE -> {
                 onStart()
             }
-
             PlayerState.STATE_PLAYING -> {
                 onPause()
             }
-
             null -> return
         }
     }
@@ -43,27 +43,39 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
         updatePlayerState()
     }
 
-    fun updatePlayerState() {
+    private fun updatePlayerState() {
         mediaPlayerInteractor.setOnStateChangeListener { state ->
+            if (state == PlayerState.STATE_PREPARED) {
+                isPlayerCreated = true
+            }
+            if (state == PlayerState.STATE_COMPLETE) {
+                handler.removeCallbacksAndMessages(null)
+            }
             playState.value = state
         }
     }
 
     fun onStart() {
-        mediaPlayerInteractor.startPlayer()
-        updatePlayerState()
-        handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+        if (isPlayerCreated) {
+            mediaPlayerInteractor.startPlayer()
+            updatePlayerState()
+            handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+        } else return
     }
 
     fun onPause() {
-        mediaPlayerInteractor.pausePlayer()
-        updatePlayerState()
-        handler.removeCallbacksAndMessages(null)
+        if (isPlayerCreated) {
+            mediaPlayerInteractor.pausePlayer()
+            updatePlayerState()
+            handler.removeCallbacksAndMessages(null)
+        } else return
     }
 
     fun onDestroy() {
-        mediaPlayerInteractor.release()
-        handler.removeCallbacks(setTimeRunnable)
+        if (isPlayerCreated) {
+            mediaPlayerInteractor.release()
+            handler.removeCallbacks(setTimeRunnable)
+        } else return
     }
 
     private fun setTime() {

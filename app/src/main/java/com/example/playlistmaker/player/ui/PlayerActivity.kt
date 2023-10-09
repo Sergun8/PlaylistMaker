@@ -47,6 +47,7 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_player)
         initViews()
+
         viewModel.preparePlayer(track.previewUrl)
 
         viewModel.observePlayState().observe(this) {
@@ -55,11 +56,9 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.observeDurationState().observe(this) {
             excerptDuration.text = it
         }
-
         playButton.setOnClickListener {
             viewModel.playbackControl()
         }
-
     }
 
     private fun initViews() {
@@ -110,13 +109,14 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun render(state: PlayerState) {
         when (state) {
-            PlayerState.STATE_PREPARED, PlayerState.STATE_PAUSED -> {
+            PlayerState.STATE_PREPARED,  PlayerState.STATE_PAUSED -> {
                 playButton.setImageResource(drawable.ic_play_button)
-            }
+                           }
             PlayerState.STATE_COMPLETE -> {
                 playButton.setImageResource(drawable.ic_play_button)
                 excerptDuration.text = getString(string.time_null)
             }
+
             PlayerState.STATE_PLAYING -> {
                 playButton.setImageResource(drawable.ic_pause_button)
             }

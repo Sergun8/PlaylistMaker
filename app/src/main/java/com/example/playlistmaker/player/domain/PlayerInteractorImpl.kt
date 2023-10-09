@@ -14,7 +14,7 @@ class PlayerInteractorImpl(private val repository: PlayerRepository) : PlayerInt
         repository.release()
     }
     override fun getPosition() = repository.getPosition()
-    override fun setOnStateChangeListener(callback: (PlayerState?) -> Unit) {
+    override fun setOnStateChangeListener(callback: (PlayerState) -> Unit) {
         repository.setOnStateChangeListener(callback)
     }
 }

@@ -6,5 +6,5 @@ interface PlayerRepository {
     fun pausePlayer()
     fun release()
     fun getPosition(): Long
-    fun setOnStateChangeListener(callback: (PlayerState?) -> Unit)
+    fun setOnStateChangeListener(callback: (PlayerState) -> Unit)
 }
