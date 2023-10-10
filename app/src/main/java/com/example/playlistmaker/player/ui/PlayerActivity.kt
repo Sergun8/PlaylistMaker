@@ -98,14 +98,15 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onStart() {
         super.onStart()
-        viewModel.onStart()
+        playbackControl(PlayerState.STATE_PLAYING)
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.onPause()
+        playbackControl(PlayerState.STATE_PLAYING)
     }
 
     override fun onDestroy() {
