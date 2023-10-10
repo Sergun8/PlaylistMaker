@@ -13,6 +13,7 @@ import java.util.Locale
 
 class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel() {
 
+
     private val handler = Handler(Looper.getMainLooper())
     private var isPlayerCreated = false
     private val playState = MutableLiveData<PlayerState>()
@@ -25,22 +26,12 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
     @SuppressLint("StaticFieldLeak")
 
     val setTimeRunnable = Runnable { setTime() }
-
-    fun playbackControl() {
-        when (playState.value) {
-            PlayerState.STATE_PREPARED, PlayerState.STATE_PAUSED, PlayerState.STATE_COMPLETE -> {
-                onStart()
-            }
-            PlayerState.STATE_PLAYING -> {
-                onPause()
-            }
-            null -> return
-        }
-    }
-
     fun preparePlayer(previewUrl: String) {
-        mediaPlayerInteractor.preparePlayer(previewUrl)
-        updatePlayerState()
+        if (!isPlayerCreated) {
+            mediaPlayerInteractor.preparePlayer(previewUrl)
+            handler.removeCallbacks(setTimeRunnable)
+            updatePlayerState()
+        } else return
     }
 
     private fun updatePlayerState() {
@@ -74,8 +65,9 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
     fun onDestroy() {
         if (isPlayerCreated) {
             mediaPlayerInteractor.release()
-            handler.removeCallbacks(setTimeRunnable)
+            isPlayerCreated = false
         } else return
+        handler.removeCallbacks(setTimeRunnable)
     }
 
     private fun setTime() {

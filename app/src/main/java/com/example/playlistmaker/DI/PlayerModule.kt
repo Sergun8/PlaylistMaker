@@ -10,10 +10,10 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val PlayerModule = module {
-    factory {
+    single {
         MediaPlayer()
     }
-    factory <PlayerRepository> {
+    single<PlayerRepository> {
         PlayerRepositoryImpl(mediaPlayer = get())
     }
     factory<PlayerInteractor> {
