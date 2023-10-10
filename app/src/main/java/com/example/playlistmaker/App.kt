@@ -1,39 +1,37 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.SearchActivity.Companion.NIGHT_THEME
-import com.example.playlistmaker.SearchActivity.Companion.SHARED_PREFS
-
+import com.example.playlistmaker.DI.PlayerModule
+import com.example.playlistmaker.DI.SearchModule
+import com.example.playlistmaker.DI.SettingModule
+import com.example.playlistmaker.setting.domain.api.SettingsRepository
+import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext.startKoin
 
 class App : Application() {
 
-    var darkTheme = false
-
-    private lateinit var sharedPrefs: SharedPreferences
-
+    private var darkTheme = false
     override fun onCreate() {
         super.onCreate()
 
-        sharedPrefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
-        darkTheme = sharedPrefs.getBoolean(NIGHT_THEME, false)
-        switchTheme(darkTheme)
 
-
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkTheme) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
+        startKoin {
+            androidLogger(org.koin.core.logger.Level.DEBUG)
+            androidContext(this@App)
+            modules(
+                SettingModule,
+                SearchModule,
+                PlayerModule
+            )
+        }
+        switchTheme(getKoin().get<SettingsRepository>().getThemeSettings().darkThemeEnabled)
     }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
-
+    private fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
-
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
                 AppCompatDelegate.MODE_NIGHT_YES
@@ -42,11 +40,5 @@ class App : Application() {
             }
         )
     }
-
-    fun saveTheme(darkThemeEnabled: Boolean) {
-        sharedPrefs
-            .edit()
-            .putBoolean(NIGHT_THEME , darkThemeEnabled)
-            .apply()
-    }
 }
+

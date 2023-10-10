@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:autofillHints="@string/Setting"
     android:orientation="vertical"
-    tools:context=".SearchActivity">
+    tools:context=".search.ui.search.SearchActivity">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -33,11 +33,9 @@
             android:layout_marginBottom="@dimen/margin_8"
             android:autofillHints=""
             android:background="@drawable/search_field"
-            android:backgroundTint="@color/light_gray"
             android:cursorVisible="true"
             android:drawableStart="@drawable/ic_search_lightmode"
             android:drawablePadding="4dp"
-            android:drawableTint="@color/gray"
             android:fontFamily="@font/ys_display_regular"
             android:foregroundGravity="center_horizontal"
             android:hint="@string/search"
@@ -50,7 +48,7 @@
             android:paddingStart="@dimen/margin_14"
             android:singleLine="true"
             android:textColor="@color/black"
-            android:textColorHint="@color/gray"
+            android:textColorHint="?attr/colorPrimaryVariant"
             android:textCursorDrawable="@drawable/cursor"
             android:textSize="@dimen/regular_font_size"
             tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
