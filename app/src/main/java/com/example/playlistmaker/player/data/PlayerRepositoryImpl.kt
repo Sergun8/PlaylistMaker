@@ -27,8 +27,10 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
     }
 
     override fun pausePlayer() {
-        mediaPlayer.pause()
-        stateCallback?.invoke(PlayerState.STATE_PAUSED)
+        if(mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+            stateCallback?.invoke(PlayerState.STATE_PAUSED)
+        }
     }
 
     override fun release() {

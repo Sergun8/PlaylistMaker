@@ -98,7 +98,6 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onStart() {
         super.onStart()
         playbackControl(PlayerState.STATE_PLAYING)
