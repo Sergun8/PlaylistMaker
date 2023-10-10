@@ -18,6 +18,7 @@ class SettingsRepositoryImpl(private val sharedPreferences: SharedPreferences) :
             .apply()
         setAppDarkTheme(settings.darkThemeEnabled)
     }
+
     private fun setAppDarkTheme(isDarkTheme: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
             if (isDarkTheme) {

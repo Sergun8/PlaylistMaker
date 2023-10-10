@@ -4,7 +4,6 @@ package com.example.playlistmaker.setting.ui.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.setting.domain.ThemeSettings
 import com.example.playlistmaker.setting.domain.api.SettingsInteractor
 import com.example.playlistmaker.setting.domain.sharing.api.SharingInteractor
@@ -43,22 +42,6 @@ class SettingsViewModel(
             darkThemeLiveData.postValue(false)
 
         }
-    }
-
-    companion object {
-        fun getViewModelFactory(
-            sharingInteractor: SharingInteractor,
-            settingsInteractor: SettingsInteractor
-        ): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SettingsViewModel(
-                        sharingInteractor,
-                        settingsInteractor
-                    ) as T
-                }
-            }
     }
 }
 

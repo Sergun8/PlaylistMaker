@@ -1,64 +1,75 @@
 package com.example.playlistmaker.player.ui
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.Creator
+import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerState
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel(application: Application) : AndroidViewModel(application) {
+class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel() {
 
-    val mediaPlayerInteractor: PlayerInteractor = Creator.providePlayerInteractor()
 
     private val handler = Handler(Looper.getMainLooper())
-    private val playButtonState = MutableLiveData<Boolean>()
-    fun observePlayButtonState(): LiveData<Boolean> = playButtonState
+    private var isPlayerCreated = false
+    private val playState = MutableLiveData<PlayerState>()
+    fun observePlayState(): LiveData<PlayerState> = playState
 
     private val durationState = MutableLiveData<String>()
     fun observeDurationState(): LiveData<String> = durationState
 
+
     @SuppressLint("StaticFieldLeak")
 
     val setTimeRunnable = Runnable { setTime() }
+    fun preparePlayer(previewUrl: String) {
+        if (!isPlayerCreated) {
+            mediaPlayerInteractor.preparePlayer(previewUrl)
+            handler.removeCallbacks(setTimeRunnable)
+            updatePlayerState()
+        } else return
+    }
 
-    fun playbackControl(state: PlayerState) {
-        when (state) {
-            PlayerState.STATE_PREPARED, PlayerState.STATE_COMPLETE, PlayerState.STATE_PAUSED -> {
-                mediaPlayerInteractor.startPlayer()
-                playButtonState.postValue(false)
-                handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+    private fun updatePlayerState() {
+        mediaPlayerInteractor.setOnStateChangeListener { state ->
+            if (state == PlayerState.STATE_PREPARED) {
+                isPlayerCreated = true
             }
-            PlayerState.STATE_PLAYING -> {
-                mediaPlayerInteractor.pausePlayer()
-                playButtonState.postValue(true)
-                handler.removeCallbacks(setTimeRunnable)
+            if (state == PlayerState.STATE_COMPLETE) {
+                handler.removeCallbacksAndMessages(null)
             }
+            playState.value = state
         }
     }
-    fun onStart() {
-        mediaPlayerInteractor.startPlayer()
 
+    fun onStart() {
+        if (isPlayerCreated) {
+            mediaPlayerInteractor.startPlayer()
+            updatePlayerState()
+            handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+        } else return
     }
+
     fun onPause() {
-        mediaPlayerInteractor.pausePlayer()
-        playButtonState.postValue(false)
-        handler.removeCallbacksAndMessages(null)
+        if (isPlayerCreated) {
+            mediaPlayerInteractor.pausePlayer()
+            updatePlayerState()
+            handler.removeCallbacksAndMessages(null)
+        } else return
     }
+
     fun onDestroy() {
-        mediaPlayerInteractor.release()
+        if (isPlayerCreated) {
+            mediaPlayerInteractor.release()
+            isPlayerCreated = false
+        } else return
         handler.removeCallbacks(setTimeRunnable)
     }
+
     private fun setTime() {
         durationState.postValue(
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(
@@ -70,14 +81,6 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
 
     companion object {
         const val SET_TIME_DELAY = 400L
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
     }
-
-
 
 }
