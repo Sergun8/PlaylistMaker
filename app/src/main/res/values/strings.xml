@@ -9,7 +9,6 @@
     <string name="support">Написать в поддержку</string>
     <string name="agreement">Пользовательское соглашение</string>
     <string name="back">Назад</string>
-
     <string name="agreement_link">"https://yandex.ru/legal/practicum_offer/"</string>
     <string name="support_mail">ya.tarannov@ya.ru</string>
     <string name="support_mail_theme">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
@@ -33,5 +32,9 @@
     <string name="add">Добавление</string>
     <string name="holder">заглушка</string>
     <string name="time_null">00:00</string>
-
+    <string name="mediateca_empty">Ваша медиатека пуста</string>
+    <string name="playlist_empty">Вы не создали\n ни одного плейлиста</string>
+    <string name="playlist_new">Нoвый плейлист</string>
+    <string name="like_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
 </resources>
