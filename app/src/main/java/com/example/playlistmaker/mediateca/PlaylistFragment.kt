@@ -12,15 +12,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class PlaylistFragment : Fragment() {
-    companion object {
-        private const val PAGE = "PAGE"
-
-        fun newInstance(number: Int) = PlaylistFragment().apply {
-            arguments = Bundle().apply {
-                putInt(PAGE, number)
-            }
-        }
-    }
 
     private val playlistsViewModel: PlaylistViewModel by viewModel {
         parametersOf()
@@ -45,4 +36,14 @@ class PlaylistFragment : Fragment() {
             newPlayList.text = getString(R.string.playlist_new)
         }
     }
+
+    companion object {
+        private const val PAGE = "PAGE"
+        fun newInstance(number: Int) = PlaylistFragment().apply {
+            arguments = Bundle().apply {
+                putInt(PAGE, number)
+            }
+        }
+    }
+
 }

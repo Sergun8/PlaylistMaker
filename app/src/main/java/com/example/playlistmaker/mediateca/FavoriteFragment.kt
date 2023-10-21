@@ -13,15 +13,7 @@ import org.koin.core.parameter.parametersOf
 
 class FavoriteFragment: Fragment() {
 
-    companion object {
-        private const val PAGE = "PAGE"
 
-        fun newInstance(number: Int) = FavoriteFragment().apply {
-            arguments = Bundle().apply {
-                putInt(PAGE, number)
-            }
-        }
-    }
 
     private val favoriteTracksViewModel: FavoriteViewModel by viewModel {
         parametersOf()
@@ -39,5 +31,14 @@ class FavoriteFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.placeholderMessage.text = getString(R.string.mediateca_empty)
         binding.placeholder.setImageResource(R.drawable.ic_nothing_found)
+    }
+    companion object {
+        private const val PAGE = "PAGE"
+
+        fun newInstance(number: Int) = FavoriteFragment().apply {
+            arguments = Bundle().apply {
+                putInt(PAGE, number)
+            }
+        }
     }
 }

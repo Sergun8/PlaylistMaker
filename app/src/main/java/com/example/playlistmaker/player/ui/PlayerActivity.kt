@@ -54,7 +54,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun initViews() {
 
         binding.playerToolbars.setNavigationOnClickListener {
-            finish()
+            this.onBackPressedDispatcher.onBackPressed()
         }
         track = Gson().fromJson((intent.getStringExtra(TRACK)), Track::class.java) as Track
         Glide.with(this)
