@@ -18,7 +18,7 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-val SearchModule = module {
+val SearchModules = module {
     single<ItunesAPI> {
         Retrofit.Builder()
             .baseUrl(RetrofitNetworkClient.ITUNES_BASE_URL)
