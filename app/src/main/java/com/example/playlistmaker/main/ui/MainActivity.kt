@@ -14,18 +14,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // binding.containerView = supportFragmentManager as FragmentContainerView
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
         val navController = navHostFragment.navController
-//binding.containerView.findNavController()
-      //  val bottomNavBar = findViewById<BottomNavigationView>(id.bottomNavigationView)
-     //   bottomNavBar.setupWithNavController(navController)
-        //  binding.bottomNavigationView.setupWithNavController(binding.containerView.findNavController())
-
-
 
         binding.bottomNavigationView.setupWithNavController(navController)
     }
-
 }
