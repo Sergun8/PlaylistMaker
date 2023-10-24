@@ -8,8 +8,11 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -17,9 +20,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 import com.example.playlistmaker.player.ui.PlayerActivity
@@ -28,7 +32,7 @@ import com.example.playlistmaker.search.ui.viewModel.SearchState
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
     private var countValue = ""
     private val trackList = ArrayList<Track>()
@@ -38,8 +42,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var inputEditText: EditText
     private lateinit var rvTrack: RecyclerView
     private lateinit var clearButton: ImageView
-    private lateinit var notFound: String
-    private lateinit var noConnection: String
     private lateinit var updateButton: Button
     private lateinit var errorImage: ImageView
     private lateinit var errorText: TextView
@@ -48,33 +50,39 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistory: Button
     private lateinit var yuoSearch: TextView
     private lateinit var progressBar: ProgressBar
+
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
     private val viewModel: SearchViewModel by viewModel()
+    private lateinit var binding: FragmentSearchBinding
 
-    @SuppressLint("RestrictedApi", "NotifyDataSetChanged")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         initViews()
 
-
-        viewModel.observeState().observe(this) {
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
-        findViewById<RecyclerView?>(R.id.history_search_list).apply {
+        rvHistoryList.apply {
             adapter = historyAdapter
         }
 
-        val toolbarSearchActivity =
-            findViewById<androidx.appcompat.widget.Toolbar>(R.id.search_toolbars)
-        toolbarSearchActivity.setNavigationOnClickListener { finish() }
 
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
-        viewModel.observeClearTextState().observe(this) { clearTextState ->
+        viewModel.observeClearTextState().observe(viewLifecycleOwner) { clearTextState ->
             if (clearTextState is ClearTextState.ClearText) {
                 clearSearchText()
                 hideKeyboard()
@@ -99,26 +107,26 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-
-    @SuppressLint("NotifyDataSetChanged", "CutPasteId")
     private fun initViews() {
-        inputEditText = findViewById(R.id.editTextSearch)
-        clearButton = findViewById(R.id.clearIcon)
-        rvTrack = findViewById(R.id.recyclerViewTrack)
-        updateButton = findViewById(R.id.search_update_button)
-        errorImage = findViewById(R.id.search_error_image)
-        errorText = findViewById(R.id.search_error_text)
-        notFound = getString(R.string.nothing_was_found)
-        noConnection = getString(R.string.communication_problems)
-        historyView = findViewById(R.id.search_history)
-        clearHistory = findViewById(R.id.clear_history)
-        rvHistoryList = findViewById(R.id.history_search_list)
-        yuoSearch = findViewById(R.id.you_searched)
-        progressBar = findViewById(R.id.progressBar)
+        with(binding) {
+            inputEditText = editTextSearch
+            clearButton = clearIcon
+            rvTrack = recyclerViewTrack
+            updateButton = searchUpdateButton
+            errorImage = searchErrorImage
+            errorText = searchErrorText
+            historyView = searchHistory
+            rvHistoryList = historySearchList
+            yuoSearch = youSearched
+            this@SearchFragment.clearHistory = binding.clearHistory
+            this@SearchFragment.progressBar = progressBar
+        }
+
+
         adapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
-                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+                val displayIntent = Intent(requireContext(), PlayerActivity::class.java)
                     .apply {
                         putExtra(TRACK, Gson().toJson(it))
                     }
@@ -128,15 +136,12 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
-                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+                val displayIntent = Intent(requireContext(), PlayerActivity::class.java)
                     .apply {
                         putExtra(TRACK, Gson().toJson(it))
                     }
-
                 startActivity(displayIntent)
             }
-
-
         }
 
         adapter.trackList = trackList
@@ -186,8 +191,8 @@ class SearchActivity : AppCompatActivity() {
 
     private fun hideKeyboard() {
         val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        inputMethodManager?.hideSoftInputFromWindow(binding.editTextSearch.windowToken, 0)
     }
 
     private fun showEmptyScreen() {
@@ -238,7 +243,6 @@ class SearchActivity : AppCompatActivity() {
         errorText.visibility = VISIBLE
         updateButton.visibility = VISIBLE
         errorImage.setImageResource(R.drawable.ic_not_internet)
-        errorText.text = noConnection
         adapter.trackList.clear()
         adapter.notifyDataSetChanged()
         updateButton.setOnClickListener { viewModel.onRefreshSearchButtonPressed(inputEditText.text.toString()) }
@@ -250,10 +254,6 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SEARCH_VALUE, countValue)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        countValue = savedInstanceState.getString(SEARCH_VALUE, "")
-    }
 
     override fun onStop() {
         super.onStop()

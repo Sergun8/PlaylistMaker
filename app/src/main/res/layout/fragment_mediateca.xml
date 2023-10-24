@@ -10,7 +10,6 @@
         android:id="@+id/mediateca_toolbars"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@drawable/ic_back"
         app:title="@string/Mediateka"
         app:titleTextAppearance="@style/TextStyleToolbar" />
 
@@ -26,7 +25,8 @@
             android:background="?attr/colorSecondaryVariant"
             app:tabIndicatorColor="?attr/colorOnPrimary"
             app:tabTextAppearance="@style/TextStyleMedium14_500"
-            app:tabTextColor="?attr/colorOnPrimary" />
+            app:tabTextColor="?attr/colorOnPrimary"
+            app:tabRippleColor="@color/blue"/>
 
     </FrameLayout>
 
