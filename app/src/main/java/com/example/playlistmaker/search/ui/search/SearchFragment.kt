@@ -186,6 +186,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun showLoading() {
+        showEmptyScreen()
         progressBar.visibility = VISIBLE
     }
 

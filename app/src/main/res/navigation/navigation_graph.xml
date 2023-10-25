@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/searchFragment">
+    app:startDestination="@id/mediatecaFragment">
 
     <fragment
         android:id="@+id/searchFragment"
@@ -21,7 +21,7 @@
         tools:layout="@layout/fragment_setting"
        />
     <fragment
-        android:id="@+id/mediaFragment"
+        android:id="@+id/mediatecaFragment"
         android:name="com.example.playlistmaker.mediateca.MediatecaFragment"
         android:label="fragment_mediateca"
         tools:layout="@layout/fragment_mediateca"

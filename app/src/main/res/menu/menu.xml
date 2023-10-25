@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_search_lightmode"
         android:title="@string/search" />
     <item
-        android:id="@+id/mediaFragment"
+        android:id="@+id/mediatecaFragment"
         android:icon="@drawable/ic_mediateca_light_mode"
         android:title="@string/Mediateka" />
     <item
