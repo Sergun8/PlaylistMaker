@@ -11,7 +11,7 @@ import com.example.playlistmaker.R.drawable
 import com.example.playlistmaker.R.string
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.domain.PlayerState
-import com.example.playlistmaker.search.ui.search.SearchActivity.Companion.TRACK
+import com.example.playlistmaker.search.ui.search.SearchFragment.Companion.TRACK
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel

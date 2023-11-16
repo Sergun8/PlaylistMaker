@@ -26,6 +26,7 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:focusable">false</item>
     </style>
+
     <style name="TextStyleError">
         <item name="android:textAlignment">center</item>
         <item name="android:textColor">?attr/colorPrimary</item>
@@ -33,10 +34,16 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight" tools:targetApi="p">500</item>
     </style>
+
     <style name="StyleBackgroundPlayer">
         <item name="android:background">?attr/colorPrimary</item>
     </style>
 
+    <style name="StyleMenuNavigation">
+        <item name="android:background">@color/black</item>
+        <item name="itemIconTint">@color/switch_color</item>
+        <item name="itemTextColor">@color/switch_color</item>
+    </style>
 
 
 </resources>
