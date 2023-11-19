@@ -1,20 +1,21 @@
 package com.example.playlistmaker.player.ui
 
-import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel() {
 
-
-    private val handler = Handler(Looper.getMainLooper())
+    private var timerJob: Job? = null
     private var isPlayerCreated = false
     private val playState = MutableLiveData<PlayerState>()
     fun observePlayState(): LiveData<PlayerState> = playState
@@ -22,14 +23,10 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
     private val durationState = MutableLiveData<String>()
     fun observeDurationState(): LiveData<String> = durationState
 
-
-    @SuppressLint("StaticFieldLeak")
-
-    val setTimeRunnable = Runnable { setTime() }
     fun preparePlayer(previewUrl: String) {
         if (!isPlayerCreated) {
             mediaPlayerInteractor.preparePlayer(previewUrl)
-            handler.removeCallbacks(setTimeRunnable)
+            timerJob?.cancel()
             updatePlayerState()
         } else return
     }
@@ -40,7 +37,7 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
                 isPlayerCreated = true
             }
             if (state == PlayerState.STATE_COMPLETE) {
-                handler.removeCallbacksAndMessages(null)
+                timerJob?.cancel()
             }
             playState.value = state
         }
@@ -50,7 +47,7 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
         if (isPlayerCreated) {
             mediaPlayerInteractor.startPlayer()
             updatePlayerState()
-            handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+            setTime()
         } else return
     }
 
@@ -58,7 +55,7 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
         if (isPlayerCreated) {
             mediaPlayerInteractor.pausePlayer()
             updatePlayerState()
-            handler.removeCallbacksAndMessages(null)
+            timerJob?.cancel()
         } else return
     }
 
@@ -67,20 +64,25 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
             mediaPlayerInteractor.release()
             isPlayerCreated = false
         } else return
-        handler.removeCallbacks(setTimeRunnable)
+        timerJob?.cancel()
     }
 
     private fun setTime() {
-        durationState.postValue(
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(
-                mediaPlayerInteractor.getPosition()
-            )
-        )
-        handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
+
+        timerJob = viewModelScope.launch {
+            while (isActive) {
+                delay(SET_TIME_DELAY)
+                durationState.postValue(
+                    SimpleDateFormat("mm:ss", Locale.getDefault()).format(
+                        mediaPlayerInteractor.getPosition()
+                    )
+                )
+            }
+        }
     }
 
     companion object {
-        const val SET_TIME_DELAY = 400L
+        const val SET_TIME_DELAY = 300L
     }
 
 }

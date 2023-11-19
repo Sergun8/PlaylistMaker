@@ -7,21 +7,23 @@ import com.example.playlistmaker.search.data.dto.TrackSearchResponse
 import com.example.playlistmaker.search.data.localStorage.HistoryRepository
 import com.example.playlistmaker.search.domain.api.TrackRepository
 import com.example.playlistmaker.search.domain.models.ErrorNetwork
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 
 class TrackRepositoryImpl(
     private val networkClient: NetworkClient, private val historyRepository: HistoryRepository
 ) : TrackRepository {
 
-    override fun search (expression: String): Resource<List<Track>> {
-        val response = networkClient.doRequest(TrackSearchRequest(expression))
-        return when (response.resultCode) {
+    override fun search(expression: String): Flow<Resource<List<Track>>> = flow {
+        val response = networkClient.doRequest(dto = TrackSearchRequest(expression))
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error(ErrorNetwork.NO_CONNECTIVITY_MESSAGE)
+                emit(Resource.Error(ErrorNetwork.NO_CONNECTIVITY_MESSAGE))
             }
 
             200 -> {
-                Resource.Success((response as TrackSearchResponse).results.map {
+                emit(Resource.Success((response as TrackSearchResponse).results.map {
                     Track(
                         it.trackId,
                         it.trackName,
@@ -34,11 +36,11 @@ class TrackRepositoryImpl(
                         it.releaseDate,
                         it.previewUrl
                     )
-                })
+                }))
             }
 
             else -> {
-                Resource.Error(ErrorNetwork.SERVER_ERROR_MESSAGE)
+                emit(Resource.Error(ErrorNetwork.SERVER_ERROR_MESSAGE))
             }
 
         }
