@@ -17,7 +17,7 @@ val PlayerModule = module {
         PlayerRepositoryImpl(mediaPlayer = get())
     }
     factory<PlayerInteractor> {
-        PlayerInteractorImpl(repository = get())
+        PlayerInteractorImpl(repository = get(), favoriteTrackRepository = get())
     }
     viewModel {
         PlayerViewModel(

@@ -6,23 +6,28 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerState
+import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel() {
 
     private var timerJob: Job? = null
     private var isPlayerCreated = false
+    private var isFavorite = false
     private val playState = MutableLiveData<PlayerState>()
+    private val timeFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
     fun observePlayState(): LiveData<PlayerState> = playState
 
     private val durationState = MutableLiveData<String>()
     fun observeDurationState(): LiveData<String> = durationState
 
+    private val isFavoriteLiveData = MutableLiveData<Boolean>()
+    fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
     fun preparePlayer(previewUrl: String) {
         if (!isPlayerCreated) {
             mediaPlayerInteractor.preparePlayer(previewUrl)
@@ -73,10 +78,36 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
             while (isActive) {
                 delay(SET_TIME_DELAY)
                 durationState.postValue(
-                    SimpleDateFormat("mm:ss", Locale.getDefault()).format(
+                    timeFormat.format(
                         mediaPlayerInteractor.getPosition()
                     )
                 )
+            }
+        }
+    }
+
+    fun checkIsFavourite(track: Track) {
+        viewModelScope.launch {
+            mediaPlayerInteractor
+                .isFavorite(track)
+                .collect { isFavorite ->
+                    this@PlayerViewModel.isFavorite = isFavorite
+                    isFavoriteLiveData.postValue(isFavorite)
+                }
+        }
+    }
+
+
+    fun onFavoriteClicked(track: Track) {
+        viewModelScope.launch {
+            isFavorite = if (isFavorite) {
+                mediaPlayerInteractor.delLike(track)
+                isFavoriteLiveData.postValue(false)
+                false
+            } else {
+                mediaPlayerInteractor.setLike(track)
+                isFavoriteLiveData.postValue(true)
+                true
             }
         }
     }
