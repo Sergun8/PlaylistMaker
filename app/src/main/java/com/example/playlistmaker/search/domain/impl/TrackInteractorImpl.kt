@@ -5,22 +5,22 @@ import com.example.playlistmaker.Resource
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.api.SearchInteractor
 import com.example.playlistmaker.search.domain.api.TrackRepository
-import java.util.concurrent.Executors
+import com.example.playlistmaker.search.domain.models.ErrorNetwork
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class TrackInteractorImpl(private val repository: TrackRepository) : SearchInteractor {
+    override fun search(expression: String): Flow<Pair<List<Track>?, ErrorNetwork?>> {
 
-    private val executor = Executors.newCachedThreadPool()
-
-    override fun search(expression: String, consumer: SearchInteractor.TrackConsumer) {
-        executor.execute {
-
-            when (val resource = repository.search(expression)) {
+        return repository.search(expression).map { result ->
+            when (result) {
 
                 is Resource.Success -> {
-                    consumer.consume(resource.data, null)
+                    Pair(result.data, null)
                 }
+
                 is Resource.Error -> {
-                    consumer.consume(null, resource.message)
+                    Pair(null, result.message)
                 }
             }
         }
