@@ -18,7 +18,7 @@ class FavoriteTrackRepositoryImpl(
     }
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
-        return tracks.map { track -> trackDbConvertor.map(track) }
+        return tracks.map(trackDbConvertor::map)
     }
     override suspend fun isFavorite(track: Track): Flow<Boolean> = flow {
       emit(appDatabase.favoriteTrackDao().isFavorite(track.trackId))

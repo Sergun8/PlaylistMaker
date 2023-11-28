@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -26,20 +24,15 @@ import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class FavoriteFragment : Fragment() {
 
     private var adapter: TrackAdapter? = null
     private lateinit var rvFavoriteList: RecyclerView
-    private lateinit var emptyImage: ImageView
-    private lateinit var emptyText: TextView
     private lateinit var progressBar: ProgressBar
     private var isClickAllowed = true
 
-    private val favoriteTracksViewModel: FavoriteViewModel by viewModel {
-        parametersOf()
-    }
+    private val favoriteTracksViewModel: FavoriteViewModel by viewModel()
 
     private lateinit var binding: FragmentLikeTrackBinding
 
@@ -64,8 +57,7 @@ class FavoriteFragment : Fragment() {
     private fun initView() {
         with(binding) {
             rvFavoriteList = favoriteList
-            emptyImage = placeholder
-            emptyText = placeholderMessage
+
             this@FavoriteFragment.progressBar = progressBar
         }
 
@@ -73,9 +65,7 @@ class FavoriteFragment : Fragment() {
             if (clickDebounce()) {
 
                 val displayIntent = Intent(requireContext(), PlayerActivity::class.java)
-                    .apply {
-                        putExtra(SearchFragment.TRACK, Gson().toJson(it))
-                    }
+                    .putExtra(SearchFragment.TRACK, Gson().toJson(it))
                 startActivity(displayIntent)
             }
         }
@@ -92,21 +82,21 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun showEmptyScreen() {
-        progressBar.isGone
-        rvFavoriteList.isGone
-        binding.placeholder.isGone
-        binding.placeholderMessage.isGone
+        progressBar.isGone = true
+        rvFavoriteList.isGone  = true
+        binding.placeholder.isGone = true
+        binding.placeholderMessage.isGone = true
     }
 
     private fun showLoading() {
         showEmptyScreen()
-        progressBar.isVisible
+        progressBar.isVisible = true
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showContent(tracks: List<Track>) {
         showEmptyScreen()
-        rvFavoriteList.isVisible
+        rvFavoriteList.isVisible = true
         adapter?.trackList?.clear()
         adapter?.trackList?.addAll(tracks)
         adapter?.notifyDataSetChanged()
@@ -115,7 +105,9 @@ class FavoriteFragment : Fragment() {
     private fun showPlaceholder() {
         showEmptyScreen()
         binding.placeholderMessage.text = getString(R.string.mediateca_empty)
+        binding.placeholderMessage.isVisible = true
         binding.placeholder.setImageResource(R.drawable.ic_nothing_found)
+        binding.placeholder.isVisible = true
     }
 
     private fun clickDebounce(): Boolean {
@@ -129,10 +121,15 @@ class FavoriteFragment : Fragment() {
         }
         return current
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         adapter = null
         rvFavoriteList.adapter = null
+    }
+    override fun onResume() {
+        super.onResume()
+        favoriteTracksViewModel.fillData()
     }
 
     companion object {
