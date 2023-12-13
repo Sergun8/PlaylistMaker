@@ -123,7 +123,7 @@
         style="@style/TextSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="?attr/colorSecondaryVariant"
+        android:background="@null"
         android:src="@drawable/ic_play_button"
         app:circularflow_viewCenter="@id/add_button"
         app:layout_constraintBottom_toBottomOf="@id/excerpt_duration"

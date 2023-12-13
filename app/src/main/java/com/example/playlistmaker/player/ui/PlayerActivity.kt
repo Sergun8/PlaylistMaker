@@ -48,6 +48,17 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.observeDurationState().observe(this) {
             binding.excerptDuration.text = it
         }
+        viewModel.checkIsFavourite(track)
+
+        binding.likeButton.setOnClickListener {
+            viewModel.onFavoriteClicked(track)
+        }
+        viewModel.observeIsFavorite().observe(this) {
+                isFavorite ->
+            binding.likeButton.setImageResource(
+                if (isFavorite) drawable.ic_like_color else drawable.ic_like
+            )
+        }
 
     }
 
