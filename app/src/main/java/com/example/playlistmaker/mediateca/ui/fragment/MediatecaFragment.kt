@@ -1,4 +1,4 @@
-package com.example.playlistmaker.mediateca
+package com.example.playlistmaker.mediateca.ui.fragment
 
 
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediatecaBinding
+import com.example.playlistmaker.mediateca.TrackViewAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MediatecaFragment : Fragment() {

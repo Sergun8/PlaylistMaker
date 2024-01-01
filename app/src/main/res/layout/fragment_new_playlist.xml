@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.07" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.93" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/image_bottom_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.50" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/image_top_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="656dp" />
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_add_photo"
+        app:layout_constraintBottom_toBottomOf="@+id/add_image"
+        app:layout_constraintEnd_toEndOf="@+id/add_image"
+        app:layout_constraintStart_toStartOf="@+id/add_image"
+        app:layout_constraintTop_toTopOf="@+id/add_image" />
+
+    <ImageView
+        android:id="@+id/add_image"
+        android:layout_width="334dp"
+        android:layout_height="299dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/dashees"
+        app:layout_constraintBottom_toTopOf="@+id/image_bottom_guideline"
+        app:layout_constraintDimensionRatio="w, 1:1"
+        app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintStart_toStartOf="@id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/image_top_guideline" />
+
+
+    <EditText
+        android:id="@+id/edit_name"
+        style="@style/TextStyleRegular16_400"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="24dp"
+        android:background="?attr/colorSecondaryVariant"
+        android:ems="10"
+        android:hint="@string/name_playlist"
+        android:inputType="text"
+        android:lines="1"
+        android:maxLength="25"
+        android:paddingStart="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/add_image"
+        tools:ignore="RtlSymmetry" />
+
+    <EditText
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/description"
+        style="@style/TextStyleRegular16_400"
+        android:inputType="text"
+        android:background="?attr/colorSecondaryVariant"
+        app:hintTextColor="@color/edit_text"
+        app:boxStrokeColor="@color/edit_text"
+        android:lines="1"
+        android:maxLength="25"
+        android:paddingStart="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/edit_name"
+        tools:ignore="RtlSymmetry" />
+    <ImageView
+        android:id="@+id/name_shape"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/rectangle"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_name"
+        app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toTopOf="@+id/edit_name" />
+
+    <ImageView
+        android:id="@+id/description_shape"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/rectangle"
+        app:layout_constraintBottom_toBottomOf="@+id/description"
+        app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toTopOf="@+id/description" />
+
+    <Button
+        android:id="@+id/save_button"
+        style="@style/TextStyleMedium16_500"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/playlist_edit"
+        android:textColor="@color/white"
+        android:clickable="true"
+        android:enabled="true"
+        app:cornerRadius="@dimen/margin_8"
+        android:text="@string/Create"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline" />
+
+    <TextView
+        android:id="@+id/small_name"
+        android:visibility="gone"
+        style="@style/TextStyleRegular12_400"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="?attr/colorSecondaryVariant"
+        android:padding="2dp"
+        android:text="@string/name_playlist"
+        android:textColor="@color/blue"
+        app:layout_constraintBottom_toTopOf="@+id/name_shape"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toTopOf="@+id/name_shape" />
+
+    <TextView
+        android:id="@+id/small_description"
+        style="@style/TextStyleRegular12_400"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="?attr/colorSecondaryVariant"
+        android:padding="2dp"
+        android:text="@string/description"
+        android:textColor="@color/blue"
+        app:layout_constraintBottom_toTopOf="@+id/description_shape"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toTopOf="@+id/description_shape" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/new_playlist_toolbars"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorSecondaryVariant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="Новый плейлист"
+        app:titleTextAppearance="@style/TextStyleToolbar">
+
+    </androidx.appcompat.widget.Toolbar>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

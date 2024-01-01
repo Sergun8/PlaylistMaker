@@ -1,4 +1,4 @@
-package com.example.playlistmaker.mediateca
+package com.example.playlistmaker.mediateca.ui.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent

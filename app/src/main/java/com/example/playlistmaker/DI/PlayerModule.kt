@@ -17,11 +17,11 @@ val PlayerModule = module {
         PlayerRepositoryImpl(mediaPlayer = get())
     }
     factory<PlayerInteractor> {
-        PlayerInteractorImpl(repository = get(), favoriteTrackRepository = get())
+        PlayerInteractorImpl(repository = get(), favoriteTrackRepository = get(), playlistRepository = get())
     }
     viewModel {
         PlayerViewModel(
-            mediaPlayerInteractor = get()
+            mediaPlayerInteractor = get(), playlistInteractor = get()
         )
     }
 }
