@@ -9,22 +9,26 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.R.dimen
 import com.example.playlistmaker.mediateca.domain.Playlist
+
 
 class PlaylistViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
     private val playlistName: TextView = itemView.findViewById(R.id.playlist_name)
-    private val amountOfTracks: TextView = itemView.findViewById(R.id.number_of_tracks)
+    private val amountTracks: TextView = itemView.findViewById(R.id.amount_tracks)
     private val image: ImageView = itemView.findViewById(R.id.playlist_cover)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SuspiciousIndentation")
     fun bind(playlist: Playlist) {
         playlistName.text = playlist.playlistName
-        amountOfTracks.text = "${ playlist.amountTrack } треков"
-        if(playlist.preview!=null)
+        amountTracks.text = "${ playlist.amountTrack } ${itemView.resources.getQuantityString(
+            R.plurals.track_amount,
+            playlist.amountTrack.toInt()
+        )}"
             Glide.with(itemView)
                 .load(playlist.preview)
                 .placeholder(R.drawable.ic_toast)
-                .transform(CenterCrop(), RoundedCorners(20))
+                .transform(CenterCrop(), RoundedCorners(itemView.resources.getDimensionPixelSize(dimen.cornerRadius_8)))
                 .into(image)
     }
 }

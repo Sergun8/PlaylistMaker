@@ -11,7 +11,6 @@ class NewPlaylistViewModel(private val playlistInteractor: PlaylistInteractor) :
 
     fun savePlaylist(name: String, description: String?, preview: Uri?) {
         viewModelScope.launch {
-
             playlistInteractor.addPlaylist(createPlaylist(name, description, preview))
         }
     }
@@ -21,6 +20,8 @@ class NewPlaylistViewModel(private val playlistInteractor: PlaylistInteractor) :
             playlistName = name,
             description = description,
             preview = preview.toString(),
+            playlistId = null
         )
     }
+
 }

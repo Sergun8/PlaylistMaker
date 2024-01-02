@@ -10,7 +10,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical">
 
         <ImageView
@@ -30,7 +29,7 @@
             tools:text="Smells Like Teen Spirit" />
 
         <TextView
-            android:id="@+id/number_of_tracks"
+            android:id="@+id/amount_tracks"
             style="@style/TextStyleRegular12_400"
             android:layout_width="wrap_content"
             android:layout_height="0dp"

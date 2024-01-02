@@ -8,9 +8,9 @@ import com.example.playlistmaker.mediateca.domain.Playlist
 
 class PlaylistTrackAdapter(): RecyclerView.Adapter<PlaylistTrackViewHolder>() {
 
-    var playlists = ArrayList<Playlist>()
+    private var playlists = ArrayList<Playlist>()
 
-    var itemClickListener: ((Int, Playlist) -> Unit)? = null
+    private var itemClickListener: ((Int, Playlist) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistTrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.playlist_bottom_sheet, parent, false)

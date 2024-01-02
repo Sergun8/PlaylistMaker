@@ -11,7 +11,8 @@
         android:layout_marginVertical="@dimen/margin_8"
         android:layout_marginStart="@dimen/margin_13"
         android:layout_marginEnd="@dimen/margin_8"
-        android:src="@drawable/ic_toast" />
+        android:src="@drawable/ic_toast"
+        android:contentDescription="TODO" />
 
     <TextView
         android:id="@+id/playlist_name"
@@ -26,7 +27,7 @@
         tools:text="Smells Like Teen Spirit" />
 
     <TextView
-        android:id="@+id/number_of_tracks"
+        android:id="@+id/amount_tracks"
         style="@style/TextSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

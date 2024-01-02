@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -76,6 +75,7 @@ class PlayerActivity : AppCompatActivity() {
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
+        binding.playlistsRecyclerView.adapter = playlistAdapterMedia
 
         binding.addButton.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -120,28 +120,6 @@ class PlayerActivity : AppCompatActivity() {
 
 
     }
-/*
-        val adapter = PlaylistTrackAdapter()
-        binding.playlistsRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        binding.playlistsRecyclerView.adapter = adapter
-
-        viewModel.observeState().observe(viewLifecycleOwner) {
-            recyclerView.visibility = View.VISIBLE
-            adapter.playlists.clear()
-            adapter.playlists.addAll(it)
-            adapter.notifyDataSetChanged()
-        }
-
-        adapter.itemClickListener = { _, playlist ->
-            viewModel.onPlaylistClicked(playlist)
-            adapter.notifyDataSetChanged()
-        }
-    }
-
-
-
- */
 
     private fun initViews() {
 
@@ -190,8 +168,8 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
     private fun showToast(isInPlaylist: Boolean) {
-        val message = if (isInPlaylist) resources.getString(string.add_playlist)
-        else resources.getString(string.add_playlist)
+        val message = if (isInPlaylist) resources.getString(string.track_in_playlist)
+        else resources.getString(string.added_playlist)
         Toast.makeText(applicationContext, "$message $currentPlaylist", Toast.LENGTH_LONG).show()
     }
     override fun onStart() {

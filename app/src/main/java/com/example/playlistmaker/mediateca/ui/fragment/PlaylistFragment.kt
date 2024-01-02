@@ -14,6 +14,7 @@ import com.example.playlistmaker.mediateca.domain.Playlist
 import com.example.playlistmaker.mediateca.ui.PlaylistAdapter
 import com.example.playlistmaker.mediateca.ui.PlaylistState
 import com.example.playlistmaker.mediateca.ui.viewModel.PlaylistViewModel
+import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistFragment : Fragment() {
@@ -33,6 +34,9 @@ class PlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        playlistsViewModel.fillData()
+        adapter = PlaylistAdapter()
         with(binding) {
             placeholderMessage.text = getString(R.string.playlist_empty)
             placeholder.setImageResource(R.drawable.ic_nothing_found)
@@ -42,8 +46,8 @@ class PlaylistFragment : Fragment() {
             rvPlaylists.adapter = adapter
         }
 
-        adapter = PlaylistAdapter()
-        playlistsViewModel.fillData()
+
+
         playlistsViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
@@ -93,7 +97,12 @@ class PlaylistFragment : Fragment() {
         }
         adapter?.playlists?.clear()
         adapter?.playlists?.addAll(playlist)
+        //adapter?.playlists = playlist as ArrayList<Playlist>
         adapter?.notifyDataSetChanged()
+    }
+    override fun onResume() {
+        super.onResume()
+        playlistsViewModel.fillData()
     }
 
     override fun onStop() {
@@ -101,6 +110,10 @@ class PlaylistFragment : Fragment() {
         playlistsViewModel.onCleared()
     }
 
+    override fun onStart() {
+        super.onStart()
+        playlistsViewModel.fillData()
+    }
     companion object {
         private const val PAGE = "PAGE"
         const val PICTURES_DIR = "playlistPictures"
