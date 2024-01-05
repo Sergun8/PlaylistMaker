@@ -7,7 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.playlistmaker.mediateca.ui.fragment.FavoriteFragment
 import com.example.playlistmaker.mediateca.ui.fragment.PlaylistFragment
 
-class TrackViewAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
+class FragmentViewAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
     : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int = 2

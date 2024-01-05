@@ -1,4 +1,4 @@
-package com.example.playlistmaker.mediateca.ui
+package com.example.playlistmaker.mediateca.ui.viewModel
 
 import com.example.playlistmaker.mediateca.domain.Playlist
 

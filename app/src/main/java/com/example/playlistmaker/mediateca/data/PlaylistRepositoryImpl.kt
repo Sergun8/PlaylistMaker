@@ -1,5 +1,6 @@
 package com.example.playlistmaker.mediateca.data
 
+import com.example.playlistmaker.mediateca.data.db.AppDatabase
 import com.example.playlistmaker.mediateca.data.db.convertors.PlaylistDbConvertor
 import com.example.playlistmaker.mediateca.data.db.convertors.TrackInPlaylistDbConvertor
 import com.example.playlistmaker.mediateca.data.db.entity.PlaylistEntity

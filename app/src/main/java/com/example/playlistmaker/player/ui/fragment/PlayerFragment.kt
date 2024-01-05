@@ -1,4 +1,4 @@
-package com.example.playlistmaker.player.ui
+package com.example.playlistmaker.player.ui.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -18,6 +18,7 @@ import com.example.playlistmaker.R.drawable
 import com.example.playlistmaker.R.string
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.player.domain.PlayerState
+import com.example.playlistmaker.player.ui.viewModel.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson

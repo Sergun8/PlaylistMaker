@@ -1,7 +1,7 @@
 package com.example.playlistmaker.DI
 
 import androidx.room.Room
-import com.example.playlistmaker.mediateca.data.AppDatabase
+import com.example.playlistmaker.mediateca.data.db.AppDatabase
 import com.example.playlistmaker.mediateca.data.FavoriteTrackRepositoryImpl
 import com.example.playlistmaker.mediateca.data.PlaylistRepositoryImpl
 import com.example.playlistmaker.mediateca.data.db.convertors.PlaylistDbConvertor

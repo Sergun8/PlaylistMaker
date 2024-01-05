@@ -1,4 +1,4 @@
-package com.example.playlistmaker.mediateca.data
+package com.example.playlistmaker.mediateca.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

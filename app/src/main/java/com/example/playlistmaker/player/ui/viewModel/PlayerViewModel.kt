@@ -1,4 +1,4 @@
-package com.example.playlistmaker.player.ui
+package com.example.playlistmaker.player.ui.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,17 +9,17 @@ import com.example.playlistmaker.mediateca.domain.PlaylistInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerState
 import com.example.playlistmaker.search.domain.models.Track
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.coroutines.launch
-import java.lang.reflect.Type
 
-class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor, val playlistInteractor: PlaylistInteractor) : ViewModel() {
+class PlayerViewModel(
+    val mediaPlayerInteractor: PlayerInteractor,
+    val playlistInteractor: PlaylistInteractor
+) : ViewModel() {
 
     private var timerJob: Job? = null
     private var isPlayerCreated = false
@@ -122,50 +122,6 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor, val playlistI
             }
         }
     }
-/*
-    fun addPlaylistClicked(playlist: Playlist){
-        val listType: Type = object : TypeToken<ArrayList<Track?>?>() {}.type
-        var tracks: ArrayList<Track>? = Gson().fromJson(playlist.trackAdd, listType)
-        if (tracks?.contains(actualTrack) == true) {
-            message.postValue("Трек уже добавлен в плейлист ${playlist.playlistName}")
-        }
-        else {
-            viewModelScope.launch {
-                playlistInteractor.deletePlaylist(playlist)
-            }
-            if (tracks != null) {
-                tracks.add(actualTrack)
-            } else {
-                tracks = ArrayList<Track>().apply { add(actualTrack) }
-            }
-            val newString = Gson().toJson(tracks)
-            val newPlaylist = Playlist(playlist.playlistName, playlist.playlistDescription, playlist.imageUri,
-                playlist.trackAmount?.plus(1), newString)
-            viewModelScope.launch {
-                playlistInteractor.addPlaylist(newPlaylist)
-                fillData()
-            }
-            message.postValue("Добавлено в плейлист ${playlist.playlistName}")
-
-
-        }
-    }
-*/
-    private val stateLiveData = MutableLiveData<List<Playlist>>()
-
-    fun observeState(): LiveData<List<Playlist>> = stateLiveData
-/*
-    fun fillData() {
-        viewModelScope.launch {
-            mediaPlayerInteractor
-                .historyPlaylists()
-                .collect { playlist ->
-                    stateLiveData.postValue(playlist)
-                }
-        }
-    }
-*/
-
 
     fun getPlaylist() {
         viewModelScope.launch {

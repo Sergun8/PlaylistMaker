@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.mediateca.domain.Playlist
 import com.example.playlistmaker.mediateca.domain.PlaylistInteractor
-import com.example.playlistmaker.mediateca.ui.PlaylistState
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(private val playlistInteractor: PlaylistInteractor) : ViewModel() {

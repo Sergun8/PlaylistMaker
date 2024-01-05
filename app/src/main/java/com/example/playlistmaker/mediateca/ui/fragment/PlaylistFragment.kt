@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.mediateca.domain.Playlist
-import com.example.playlistmaker.mediateca.ui.PlaylistAdapter
-import com.example.playlistmaker.mediateca.ui.PlaylistState
+import com.example.playlistmaker.mediateca.ui.viewModel.PlaylistState
 import com.example.playlistmaker.mediateca.ui.viewModel.PlaylistViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

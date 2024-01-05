@@ -14,9 +14,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentLikeTrackBinding
-import com.example.playlistmaker.mediateca.ui.FavoriteState
+import com.example.playlistmaker.mediateca.ui.viewModel.FavoriteState
 import com.example.playlistmaker.mediateca.ui.viewModel.FavoriteViewModel
-import com.example.playlistmaker.player.ui.PlayerFragment
+import com.example.playlistmaker.player.ui.fragment.PlayerFragment
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.search.SearchFragment
 import com.example.playlistmaker.search.ui.search.TrackAdapter

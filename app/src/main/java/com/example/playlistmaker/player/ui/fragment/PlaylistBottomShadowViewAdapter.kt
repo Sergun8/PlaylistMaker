@@ -1,4 +1,4 @@
-package com.example.playlistmaker.player.ui
+package com.example.playlistmaker.player.ui.fragment
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

@@ -25,7 +25,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
-import com.example.playlistmaker.player.ui.PlayerFragment
+import com.example.playlistmaker.player.ui.fragment.PlayerFragment
 import com.example.playlistmaker.search.ui.viewModel.ClearTextState
 import com.example.playlistmaker.search.ui.viewModel.SearchState
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel

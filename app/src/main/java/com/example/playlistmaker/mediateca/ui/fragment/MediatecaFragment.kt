@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediatecaBinding
-import com.example.playlistmaker.mediateca.TrackViewAdapter
+import com.example.playlistmaker.mediateca.FragmentViewAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MediatecaFragment : Fragment() {
@@ -29,7 +29,7 @@ class MediatecaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        binding.viewPager.adapter = TrackViewAdapter(childFragmentManager, lifecycle)
+        binding.viewPager.adapter = FragmentViewAdapter(childFragmentManager, lifecycle)
 
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
