@@ -45,6 +45,8 @@
     <string name="added_playlist">Добавлено в плейлист</string>
     <string name="track_in_playlist">Трек уже добавлен в плейлист</string>
     <string name="tracks">Треков</string>
+    <string name="creat_playlist">Плейлист создан</string>
+    <string name="ignore">ignore</string>
     <plurals name="track_amount">
         <item quantity="zero"> треков</item>
         <item quantity="one"> трек</item>

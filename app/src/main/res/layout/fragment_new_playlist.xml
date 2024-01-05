@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
 
     >
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
         android:layout_width="wrap_content"
@@ -20,12 +21,6 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.93" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/image_bottom_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="408dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/image_top_guideline"
@@ -43,20 +38,23 @@
         app:layout_constraintBottom_toBottomOf="@+id/add_image"
         app:layout_constraintEnd_toEndOf="@+id/add_image"
         app:layout_constraintStart_toStartOf="@+id/add_image"
-        app:layout_constraintTop_toTopOf="@+id/add_image" />
+        app:layout_constraintTop_toTopOf="@+id/add_image"
+        android:contentDescription="@string/ignore" />
+
 
     <ImageView
         android:id="@+id/add_image"
         android:layout_width="334dp"
         android:layout_height="299dp"
+        android:layout_marginTop="16dp"
         android:scaleType="fitXY"
         android:src="@drawable/dashees"
-        app:layout_constraintBottom_toTopOf="@+id/image_bottom_guideline"
         app:layout_constraintDimensionRatio="w, 1:1"
         app:layout_constraintEnd_toEndOf="@id/right_guideline"
+        app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="@id/left_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/image_top_guideline" />
-
+        app:layout_constraintTop_toBottomOf="@+id/new_playlist_toolbars"
+        android:contentDescription="@string/ignore" />
 
     <EditText
         android:id="@+id/edit_name"
@@ -65,36 +63,44 @@
         android:layout_height="60dp"
         android:layout_marginTop="24dp"
         android:background="?attr/colorSecondaryVariant"
+        android:cursorVisible="true"
         android:ems="10"
         android:hint="@string/name_playlist"
         android:inputType="text"
         android:lines="1"
         android:maxLength="25"
         android:paddingStart="20dp"
+        android:textColorHint="?attr/colorOnPrimary"
+        android:textCursorDrawable="@drawable/cursor"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/add_image"
-        tools:ignore="RtlSymmetry" />
+        tools:ignore="RtlSymmetry"
+        android:autofillHints="@string/name_playlist" />
 
     <EditText
         android:id="@+id/description"
+        style="@style/TextStyleRegular16_400"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginTop="16dp"
+        android:background="?attr/colorSecondaryVariant"
+        android:cursorVisible="true"
         android:ems="10"
         android:hint="@string/description"
-        style="@style/TextStyleRegular16_400"
         android:inputType="text"
-        android:background="?attr/colorSecondaryVariant"
-        app:hintTextColor="@color/edit_text"
-        app:boxStrokeColor="@color/edit_text"
         android:lines="1"
         android:maxLength="25"
         android:paddingStart="20dp"
+        android:textColorHint="?attr/colorOnPrimary"
+        android:textCursorDrawable="@drawable/cursor"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toBottomOf="@+id/edit_name"
-        tools:ignore="RtlSymmetry" />
+        tools:ignore="RtlSymmetry"
+        android:autofillHints="@string/description" />
+
     <ImageView
         android:id="@+id/name_shape"
         android:layout_width="0dp"
@@ -102,8 +108,11 @@
         android:src="@drawable/rectangle"
         app:layout_constraintBottom_toBottomOf="@+id/edit_name"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        app:layout_constraintTop_toTopOf="@+id/edit_name" />
+        app:layout_constraintTop_toTopOf="@+id/edit_name"
+        app:layout_constraintVertical_bias="0.0"
+        android:contentDescription="@string/ignore" />
 
     <ImageView
         android:id="@+id/description_shape"
@@ -113,7 +122,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/description"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
-        app:layout_constraintTop_toTopOf="@+id/description" />
+        app:layout_constraintTop_toTopOf="@+id/description"
+        android:contentDescription="@string/ignore" />
 
     <Button
         android:id="@+id/save_button"
@@ -121,21 +131,24 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/playlist_edit"
-        android:textColor="@color/white"
+        android:backgroundTint="@color/save_button"
         android:clickable="true"
         android:enabled="true"
-        app:cornerRadius="@dimen/margin_8"
+        android:shadowColor="@null"
+        android:shadowRadius="@null"
         android:text="@string/Create"
         android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:cornerRadius="@dimen/margin_8"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/right_guideline"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/left_guideline" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/left_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/small_name"
-        android:visibility="gone"
         style="@style/TextStyleRegular12_400"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -144,6 +157,7 @@
         android:padding="2dp"
         android:text="@string/name_playlist"
         android:textColor="@color/blue"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/name_shape"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toTopOf="@+id/name_shape" />
@@ -152,16 +166,17 @@
         android:id="@+id/small_description"
         style="@style/TextStyleRegular12_400"
         android:layout_width="wrap_content"
-        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:background="?attr/colorSecondaryVariant"
         android:padding="2dp"
         android:text="@string/description"
         android:textColor="@color/blue"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/description_shape"
         app:layout_constraintStart_toStartOf="@+id/left_guideline"
         app:layout_constraintTop_toTopOf="@+id/description_shape" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/new_playlist_toolbars"
         android:layout_width="match_parent"

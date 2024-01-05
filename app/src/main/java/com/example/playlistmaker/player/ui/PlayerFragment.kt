@@ -1,20 +1,23 @@
 package com.example.playlistmaker.player.ui
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.R.dimen
 import com.example.playlistmaker.R.drawable
 import com.example.playlistmaker.R.string
-import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.mediateca.ui.fragment.NewPlaylistFragment
+import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.player.domain.PlayerState
-import com.example.playlistmaker.search.ui.search.SearchFragment.Companion.TRACK
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
@@ -23,10 +26,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : Fragment() {
 
     private lateinit var track: Track
-    private lateinit var binding: ActivityPlayerBinding
+    private lateinit var binding: FragmentPlayerBinding
     private val viewModel: PlayerViewModel by viewModel()
 
 
@@ -36,18 +39,28 @@ class PlayerActivity : AppCompatActivity() {
         currentPlaylist = it.playlistName
         viewModel.addTrackInPlaylist(it, track)
     }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().navigateUp()
+                }
+            })
+        binding.playerToolbars.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+        return binding.root
+    }
+    @SuppressLint("SuspiciousIndentation")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-
-    @SuppressLint("ResourceType")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         initViews()
 
         viewModel.preparePlayer(track.previewUrl)
 
-        viewModel.observePlayState().observe(this) { state ->
+        viewModel.observePlayState().observe(viewLifecycleOwner) { state ->
             binding.playButton.setOnClickListener {
                 playbackControl(state)
             }
@@ -58,7 +71,7 @@ class PlayerActivity : AppCompatActivity() {
 
             }
         }
-        viewModel.observeDurationState().observe(this) {
+        viewModel.observeDurationState().observe(viewLifecycleOwner) {
             binding.excerptDuration.text = it
         }
         viewModel.checkIsFavourite(track)
@@ -66,7 +79,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.likeButton.setOnClickListener {
             viewModel.onFavoriteClicked(track)
         }
-        viewModel.observeIsFavorite().observe(this) { isFavorite ->
+        viewModel.observeIsFavorite().observe(viewLifecycleOwner) { isFavorite ->
             binding.likeButton.setImageResource(
                 if (isFavorite) drawable.ic_like_color else drawable.ic_like
             )
@@ -80,28 +93,21 @@ class PlayerActivity : AppCompatActivity() {
         binding.addButton.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             viewModel.getPlaylist()
-            viewModel.playlistLiveData().observe(this) { list ->
+            viewModel.playlistLiveData().observe(viewLifecycleOwner) { list ->
                 playlistAdapterMedia.setPlaylistItem(list)
                 binding.playlistsRecyclerView.adapter = playlistAdapterMedia
             }
 
         }
-
-
-
-
-
         binding.newPlayList.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             binding.constraintLayout.visibility=View.GONE
             binding.fragmentContainer.visibility=View.VISIBLE
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragment_container, NewPlaylistFragment())
-            fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.commit()
+                findNavController()
+                    .navigate(R.id.action_playerFragment_to_newPlaylistFragment)
         }
 
-        viewModel.addTrackInPlaylistLiveData().observe(this) {
+        viewModel.addTrackInPlaylistLiveData().observe(viewLifecycleOwner) {
             if (!it) bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             showToast(it)
         }
@@ -118,15 +124,14 @@ class PlayerActivity : AppCompatActivity() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
-
     }
 
     private fun initViews() {
 
-        binding.playerToolbars.setNavigationOnClickListener {
-            this.onBackPressedDispatcher.onBackPressed()
-        }
-        track = Gson().fromJson((intent.getStringExtra(TRACK)), Track::class.java) as Track
+
+
+        track = Gson().fromJson(requireArguments().getString(ARGS_TRACK), Track::class.java)
+
         Glide.with(this)
             .load(track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"))
             .placeholder(drawable.ic_toast)
@@ -170,7 +175,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun showToast(isInPlaylist: Boolean) {
         val message = if (isInPlaylist) resources.getString(string.track_in_playlist)
         else resources.getString(string.added_playlist)
-        Toast.makeText(applicationContext, "$message $currentPlaylist", Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), "$message $currentPlaylist", Toast.LENGTH_LONG).show()
     }
     override fun onStart() {
         super.onStart()
@@ -187,5 +192,10 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.onDestroy()
     }
 
+    companion object {
+        const val ARGS_TRACK = "track"
+        fun createArgs(track: String): Bundle =
+            bundleOf(ARGS_TRACK to track)
 
+    }
 }

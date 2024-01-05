@@ -14,7 +14,6 @@ import com.example.playlistmaker.mediateca.domain.Playlist
 import com.example.playlistmaker.mediateca.ui.PlaylistAdapter
 import com.example.playlistmaker.mediateca.ui.PlaylistState
 import com.example.playlistmaker.mediateca.ui.viewModel.PlaylistViewModel
-import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistFragment : Fragment() {
@@ -29,6 +28,10 @@ class PlaylistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        binding.newPlayList.setOnClickListener {
+            findNavController().navigate(R.id.action_mediatecaFragment_to_newPlaylistFragment)
+        }
+
         return binding.root
     }
 
@@ -51,10 +54,6 @@ class PlaylistFragment : Fragment() {
         playlistsViewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
-        binding.newPlayList.setOnClickListener {
-             findNavController().navigate(R.id.action_mediatecaFragment_to_newPlaylistFragment)
-        }
-
     }
 
     private fun render(state: PlaylistState) {
@@ -97,7 +96,6 @@ class PlaylistFragment : Fragment() {
         }
         adapter?.playlists?.clear()
         adapter?.playlists?.addAll(playlist)
-        //adapter?.playlists = playlist as ArrayList<Playlist>
         adapter?.notifyDataSetChanged()
     }
     override fun onResume() {
@@ -116,8 +114,6 @@ class PlaylistFragment : Fragment() {
     }
     companion object {
         private const val PAGE = "PAGE"
-        const val PICTURES_DIR = "playlistPictures"
-        const val COVER_JPG = "_preview.jpg"
         fun newInstance(number: Int) = PlaylistFragment().apply {
             arguments = Bundle().apply {
                 putInt(PAGE, number)

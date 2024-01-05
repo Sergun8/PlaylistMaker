@@ -1,7 +1,6 @@
 package com.example.playlistmaker.mediateca.ui.fragment
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +10,13 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentLikeTrackBinding
 import com.example.playlistmaker.mediateca.ui.FavoriteState
 import com.example.playlistmaker.mediateca.ui.viewModel.FavoriteViewModel
-import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.search.SearchFragment
 import com.example.playlistmaker.search.ui.search.TrackAdapter
@@ -63,10 +63,11 @@ class FavoriteFragment : Fragment() {
 
         adapter = TrackAdapter {
             if (clickDebounce()) {
-
-                val displayIntent = Intent(requireContext(), PlayerActivity::class.java)
-                    .putExtra(SearchFragment.TRACK, Gson().toJson(it))
-                startActivity(displayIntent)
+                val trackJson = Gson().toJson(it)
+                findNavController().navigate(
+                    R.id.action_mediaFragment_to_playerFragment,
+                    PlayerFragment.createArgs(trackJson)
+                )
             }
         }
         rvFavoriteList.adapter = adapter
@@ -83,7 +84,7 @@ class FavoriteFragment : Fragment() {
 
     private fun showEmptyScreen() {
         progressBar.isGone = true
-        rvFavoriteList.isGone  = true
+        rvFavoriteList.isGone = true
         binding.placeholder.isGone = true
         binding.placeholderMessage.isGone = true
     }
@@ -127,6 +128,7 @@ class FavoriteFragment : Fragment() {
         adapter = null
         rvFavoriteList.adapter = null
     }
+
     override fun onResume() {
         super.onResume()
         favoriteTracksViewModel.fillData()

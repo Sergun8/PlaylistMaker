@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@null">
+    android:backgroundTint="?attr/colorSecondaryVariant"
+    >
 
     <ImageView
         android:id="@+id/playlist_cover"
@@ -11,8 +12,9 @@
         android:layout_marginVertical="@dimen/margin_8"
         android:layout_marginStart="@dimen/margin_13"
         android:layout_marginEnd="@dimen/margin_8"
+        android:backgroundTint="@null"
         android:src="@drawable/ic_toast"
-        android:contentDescription="TODO" />
+        android:contentDescription="@string/ignore" />
 
     <TextView
         android:id="@+id/playlist_name"
@@ -22,9 +24,10 @@
         android:layout_marginStart="68dp"
         android:layout_marginTop="@dimen/margin_14"
         android:layout_marginBottom="@dimen/margin_1"
+        android:backgroundTint="@null"
         android:maxWidth="250dp"
         android:singleLine="true"
-        tools:text="Smells Like Teen Spirit" />
+        tools:text="любимые треки" />
 
     <TextView
         android:id="@+id/amount_tracks"
@@ -39,5 +42,6 @@
         android:ellipsize="end"
         android:maxWidth="250dp"
         android:maxLines="1"
+        android:backgroundTint="@null"
         tools:text="194 трека" />
 </androidx.cardview.widget.CardView>

@@ -121,6 +121,9 @@ class SearchViewModel(
             }
         }
     }
+    fun onDestroy() {
+        searchJob?.cancel()
+    }
 
     companion object {
         const val SEARCH_DEBOUNCE_DELAY = 2_000L

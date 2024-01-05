@@ -2,7 +2,6 @@ package com.example.playlistmaker.search.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,12 +19,13 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
-import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.ui.viewModel.ClearTextState
 import com.example.playlistmaker.search.ui.viewModel.SearchState
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
@@ -125,21 +125,21 @@ class SearchFragment : Fragment() {
         adapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
-                val displayIntent = Intent(requireContext(), PlayerActivity::class.java)
-                    .apply {
-                        putExtra(TRACK, Gson().toJson(it))
-                    }
-                startActivity(displayIntent)
+                val trackJson = Gson().toJson(it)
+                findNavController().navigate(
+                    R.id.action_searchFragment_to_playerFragment,
+                    PlayerFragment.createArgs(trackJson)
+                )
             }
         }
         historyAdapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
-                val displayIntent = Intent(requireContext(), PlayerActivity::class.java)
-                    .apply {
-                        putExtra(TRACK, Gson().toJson(it))
-                    }
-                startActivity(displayIntent)
+                val trackJson = Gson().toJson(it)
+                findNavController().navigate(
+                    R.id.action_searchFragment_to_playerFragment,
+                    PlayerFragment.createArgs(trackJson)
+                )
             }
         }
 
@@ -147,8 +147,6 @@ class SearchFragment : Fragment() {
         rvTrack.adapter = adapter
         historyAdapter.trackList = historyList
         rvHistoryList.adapter = historyAdapter
-
-
     }
 
     private val simpleTextWatcher = object : TextWatcher {
@@ -255,9 +253,16 @@ class SearchFragment : Fragment() {
     }
 
 
-    override fun onStop() {
-        super.onStop()
-        viewModel.onCleared()
+   override fun onDestroyView() {
+        super.onDestroyView()
+        simpleTextWatcher.let { binding.editTextSearch.removeTextChangedListener(it) }
+        viewModel.onDestroy()
+
+    }
+
+     override fun onResume() {
+        super.onResume()
+         isClickAllowed = true
     }
 
     private fun clearSearchText() {
@@ -279,7 +284,6 @@ class SearchFragment : Fragment() {
 
     companion object {
         const val SEARCH_VALUE = "SEARCH_VALUE"
-        const val TRACK = "TRACK"
         const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

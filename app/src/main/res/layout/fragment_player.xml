@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".player.ui.PlayerActivity">
+    tools:context=".player.ui.PlayerFragment">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container"
@@ -309,7 +309,7 @@
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
-            android:layout_width="40dp"
+            android:layout_width="50dp"
             android:layout_height="4dp"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"

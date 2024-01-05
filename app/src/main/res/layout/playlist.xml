@@ -4,19 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="3dp"
-    android:background="@null"
+    android:backgroundTint="?attr/colorSecondaryVariant"
     app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="196dp"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="4dp"
+        android:background="@null">
 
         <ImageView
             android:id="@+id/playlist_cover"
-            android:layout_width="160dp"
+            android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:src="@drawable/ic_toast" />
+            android:scaleType="fitXY"
+            android:backgroundTint="@null"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_toast"
+            android:contentDescription="@string/ignore" />
 
         <TextView
             android:id="@+id/playlist_name"
@@ -24,9 +30,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:backgroundTint="@null"
             android:maxWidth="160dp"
             android:singleLine="true"
-            tools:text="Smells Like Teen Spirit" />
+            tools:text="любимые треки" />
 
         <TextView
             android:id="@+id/amount_tracks"
@@ -34,6 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_gravity="bottom"
+            android:backgroundTint="@null"
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxWidth="250dp"

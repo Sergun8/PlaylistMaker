@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/custom_toast_container"
-    android:layout_width="wrap_content"
+    android:id="@+id/toast_container"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/toast_backgraund_playlist"
     android:orientation="vertical"
+    android:paddingStart="@dimen/margin_16"
+    android:paddingEnd="@dimen/margin_16"
     android:padding="8dp"
     android:gravity="center">
 
@@ -13,9 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Плейлист создан"
+        android:text="@string/creat_playlist"
         android:textSize="14sp"
         android:paddingHorizontal="40dp"
-        android:paddingTop="10dp"
-        android:textColor="@color/white" />
+        android:textColor="?attr/colorSecondaryVariant" />
 </LinearLayout>
