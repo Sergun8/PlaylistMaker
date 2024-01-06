@@ -44,6 +44,8 @@
         <item name="itemIconTint">@color/switch_color</item>
         <item name="itemTextColor">@color/switch_color</item>
     </style>
-
+    <style name="AlertTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
 
 </resources>

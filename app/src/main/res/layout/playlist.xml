@@ -1,0 +1,51 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp"
+    android:backgroundTint="?attr/colorSecondaryVariant"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="196dp"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="4dp"
+        android:background="@null">
+
+        <ImageView
+            android:id="@+id/playlist_cover"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:scaleType="fitXY"
+            android:backgroundTint="@null"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_toast"
+            android:contentDescription="@string/ignore" />
+
+        <TextView
+            android:id="@+id/playlist_name"
+            style="@style/TextStyleRegular12_400"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:backgroundTint="@null"
+            android:maxWidth="160dp"
+            android:singleLine="true"
+            tools:text="любимые треки" />
+
+        <TextView
+            android:id="@+id/amount_tracks"
+            style="@style/TextStyleRegular12_400"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:backgroundTint="@null"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxWidth="250dp"
+            android:maxLines="1"
+            tools:text="194 трека" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

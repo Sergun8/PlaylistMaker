@@ -1,9 +1,11 @@
-package com.example.playlistmaker.player.ui
+package com.example.playlistmaker.player.ui.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.mediateca.domain.Playlist
+import com.example.playlistmaker.mediateca.domain.PlaylistInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerState
 import com.example.playlistmaker.search.domain.models.Track
@@ -14,7 +16,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel() {
+class PlayerViewModel(
+    val mediaPlayerInteractor: PlayerInteractor,
+    val playlistInteractor: PlaylistInteractor
+) : ViewModel() {
 
     private var timerJob: Job? = null
     private var isPlayerCreated = false
@@ -28,6 +33,12 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
 
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
+
+    private var playlistLiveData = MutableLiveData<List<Playlist>>()
+    fun playlistLiveData(): LiveData<List<Playlist>> = playlistLiveData
+
+    private var addTrackInPlaylistData = MutableLiveData<Boolean>()
+    fun addTrackInPlaylistLiveData(): LiveData<Boolean> = addTrackInPlaylistData
     fun preparePlayer(previewUrl: String) {
         if (!isPlayerCreated) {
             mediaPlayerInteractor.preparePlayer(previewUrl)
@@ -109,6 +120,25 @@ class PlayerViewModel(val mediaPlayerInteractor: PlayerInteractor) : ViewModel()
                 isFavoriteLiveData.postValue(true)
                 true
             }
+        }
+    }
+
+    fun getPlaylist() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect { listPlaylist ->
+                playlistLiveData.value = listPlaylist
+            }
+        }
+    }
+
+    fun addTrackInPlaylist(playlist: Playlist, track: Track) {
+        val isAddTrack = playlist.trackIds.contains(track.trackId.toLong())
+        if (isAddTrack) addTrackInPlaylistData.value = true
+        else {
+            viewModelScope.launch {
+                mediaPlayerInteractor.addTrackInPlaylist(playlist, track)
+            }
+            addTrackInPlaylistData.value = false
         }
     }
 
