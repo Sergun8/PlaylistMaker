@@ -34,7 +34,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_back"
+            app:navigationIcon="@drawable/ic_back_black"
             app:titleTextAppearance="@style/TextStyleToolbar">
 
         </androidx.appcompat.widget.Toolbar>
@@ -191,7 +191,7 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="10dp"
-            android:background="@color/white">
+            android:background="@null">
 
             <ImageView
                 android:id="@+id/iv_bottom_sheet"
@@ -229,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="2dp"
-                android:textColor="@color/gray"
+                android:textColor="?attr/colorOnSecondary"
                 app:layout_constraintStart_toEndOf="@id/iv_bottom_sheet"
                 app:layout_constraintTop_toBottomOf="@id/name_bottom_sheet"
                 tools:text="182 трэков" />
