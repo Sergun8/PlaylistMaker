@@ -58,10 +58,9 @@ class InfoPlaylistViewModel(private val interactor: InfoPlaylistInteractor) : Vi
         }
     }
     private fun createPlaylist(playlist: Playlist, trackList: List<Track>) : String {
-        var sharingText = "${playlist.playlistName}\n${playlist.description}\n${playlist.amountTrack} треков\n" +
-                "${playlist.amountTrack}\n"
+        var sharingText = "${playlist.playlistName}\n${playlist.description}\n${playlist.amountTrack} треков\n"
         for (i in trackList.indices) {
-            sharingText += "${i + 1}. ${trackList[i].artistName} - (${SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackList[i].trackTimeMillis!!.toLong())})\n"
+            sharingText += "${i + 1}. ${trackList[i].artistName}, ${trackList[i].trackName} - (${SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackList[i].trackTimeMillis!!.toLong())})\n"
         }
         return sharingText
     }
