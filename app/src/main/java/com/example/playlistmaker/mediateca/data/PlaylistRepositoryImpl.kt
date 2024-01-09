@@ -19,6 +19,7 @@ class PlaylistRepositoryImpl(
     override suspend fun addPlaylist(playlist: Playlist) {
         appDatabase.playlistDao().addPlaylist(playlistDbConvertor.map(playlist))
     }
+
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
         val tracks = appDatabase.playlistDao().getPlaylists()
         emit(convertFromPlaylistEntity(tracks))
@@ -40,6 +41,10 @@ class PlaylistRepositoryImpl(
 
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map(playlistDbConvertor::map)
+    }
+
+    private fun convertFromPlaylistEntityOne(playlist: PlaylistEntity): Playlist {
+        return playlistDbConvertor.map(playlist)
     }
 
     private suspend fun newListTrack(trackList: List<Long>): List<Track> {
@@ -68,4 +73,30 @@ class PlaylistRepositoryImpl(
     private suspend fun updatePlaylist(playlist: Playlist) {
         appDatabase.playlistDao().updatePlaylist(playlistDbConvertor.map(playlist))
     }
+
+    override suspend fun getInfoPlaylist(playlistID: Long): Flow<Playlist> = flow {
+        val playlist = appDatabase.playlistDao().getCurrentPlaylist(id = playlistID)
+        emit(convertFromPlaylistEntityOne(playlist))
+    }
+
+
+    override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: Long) {
+        appDatabase.trackInPlaylistsDao().deleteTrackFromPlaylist(trackId)
+        delTrackPlaylist(playlistId, trackId)
+    }
+
+    private suspend fun delTrackPlaylist(playlistId: Long, trackId: String) {
+        val updatedPlaylist =
+            playlistDbConvertor.map(appDatabase.playlistDao().getCurrentPlaylist(playlistId))
+        updatedPlaylist.trackIds.remove(trackId.toLong())
+        updatedPlaylist.amountTrack--
+        updatePlaylist(updatedPlaylist)
+    }
+    override suspend fun delPlaylist(playlistId: Long) {
+        appDatabase.playlistDao().deletePlaylistEntity(playlistId)
+    }
+    override suspend fun updatePlaylistInfo(playlist: Playlist) {
+        appDatabase.playlistDao().updatePlaylistInfo(playlist.playlistId!!, playlist.playlistName, playlist.description!!, playlist.preview!!)
+    }
+
 }

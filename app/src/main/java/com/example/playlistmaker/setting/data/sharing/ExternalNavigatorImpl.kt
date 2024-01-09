@@ -32,4 +32,10 @@ class ExternalNavigatorImpl(
         intent.putExtra(Intent.EXTRA_TEXT, supportEmailData.textMessage)
         context.startActivity(intent)
     }
+    override fun sharePlaylist(sharePlaylist: String) {
+        val intent = Intent(Intent.ACTION_SEND).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT, sharePlaylist)
+        context.startActivity(intent)
+    }
 }

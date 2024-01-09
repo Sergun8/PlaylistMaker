@@ -18,6 +18,8 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -37,8 +39,7 @@ class NewPlaylistFragment : Fragment() {
 
     lateinit var confirmDialog: MaterialAlertDialogBuilder
     private val viewModel: NewPlaylistViewModel by viewModel()
-
-
+    private var playlistID: Long? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,6 +64,10 @@ class NewPlaylistFragment : Fragment() {
         binding.newPlaylistToolbars.setNavigationOnClickListener {
             backScreen()
         }
+        if (arguments?.containsKey("PLAYLIST_ID") == true) {
+            fillContent()
+        }
+
         setPreview()
         binding.editName.addTextChangedListener(textWatcherName)
         binding.description.addTextChangedListener(textWatcherDescription)
@@ -101,13 +106,14 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
-
     private fun setPreview() {
         var flag = false
         val namePreview = generateImageName()
+        var coverUri: Uri? = null
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
+                    coverUri = uri
                     flag = true
                     Glide.with(requireContext())
                         .load(uri)
@@ -128,15 +134,28 @@ class NewPlaylistFragment : Fragment() {
 
 
         binding.saveButton.setOnClickListener {
-            viewModel.savePlaylist(
-                binding.editName.text.toString(),
-                binding.description.text.toString(),
-                namePreview
-            )
-            showMessage("Плейлист ${binding.editName.text} создан")
+            if (playlistID != null) {
+                if (coverUri != null) saveImageToPrivateStorage(
+                    coverUri!!,
+                    arguments?.getString("PREVIEW").toString()
+                )
+                viewModel.updatePlaylist(
+                    playlistID!!,
+                    binding.editName.text.toString(),
+                    binding.description.text.toString(),
+                    namePreview
+                )
+                showMessage("Плейлист ${binding.editName.text} сохранен")
+            } else {
+                viewModel.savePlaylist(
+                    binding.editName.text.toString(),
+                    binding.description.text.toString(),
+                    namePreview
+                )
+                showMessage("Плейлист ${binding.editName.text} создан")
+            }
             findNavController().navigateUp()
         }
-
         confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertTheme)
             .setTitle("Завершить создание плейлиста?")
             .setNeutralButton("Отмена") { _, _ ->
@@ -196,7 +215,7 @@ class NewPlaylistFragment : Fragment() {
 
     private fun backScreen() {
         if (binding.addImage.background == null
-            || binding.editName.text!!.isNotEmpty()
+
             || binding.description.text!!.isNotEmpty()
         ) {
             confirmDialog.show()
@@ -205,8 +224,51 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
+    private fun fillContent() {
+        with(binding) {
+            newPlaylistToolbars.title = "Редактировать плейлист"
+            saveButton.text = "Сохранить"
+            editName.setText(arguments?.getString("PLAYLIST_NAME"))
+            description.setText(arguments?.getString("DESCRIPTION"))
+            saveButton.isClickable = true
+            saveButton.isEnabled = true
+            nameShape.isEnabled = true
+            descriptionShape.isEnabled = true
+            smallName.isVisible = true
+            smallDescription.isVisible = true
+        }
+        playlistID = arguments?.getLong("PLAYLIST_ID")
+        val preview = arguments?.getString("PREVIEW")
+        val filePath =
+            File(
+                requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                PICTURES
+            )
+        if (preview != null) {
+            Glide.with(this)
+                .load(File(filePath, preview))
+                .fitCenter()
+                .placeholder(R.drawable.dashees)
+                .transform(
+                    RoundedCorners(this.resources.getDimensionPixelSize(dimen.cornerRadius_8))
+                )
+                .into(binding.addImage)
+        }
+    }
     companion object {
         const val PICTURES = "playlist"
+        fun createArgs(
+            playlistId: Long?,
+            playlistName: String,
+            description: String?,
+            preview: String?
+        ): Bundle =
+            bundleOf(
+                "PLAYLIST_ID" to playlistId,
+                "PLAYLIST_NAME" to playlistName,
+                "DESCRIPTION" to description,
+                "PREVIEW" to preview
+            )
     }
 
 }
