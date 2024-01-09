@@ -219,7 +219,8 @@ class InfoPlaylistFragment : Fragment() {
               MaterialAlertDialogBuilder(requireActivity(),R.style.AlertTheme)
             .setTitle("Удалить трек?")
             .setMessage("Вы уверены, что хотите удалить трек из плейлиста?")
-            .setNeutralButton("Отмена")
+            .setNegativeButton("Отмена")
+
             { _, _ -> }
             .setPositiveButton("Удалить")
             { _, _ ->
@@ -232,7 +233,7 @@ class InfoPlaylistFragment : Fragment() {
         MaterialAlertDialogBuilder(requireActivity(), R.style.AlertTheme)
             .setTitle("Удалить плейлист")
             .setMessage("Хотите удалить плейлист?")
-            .setNeutralButton("Нет") { _, _ -> }
+            .setNegativeButton("Нет") { _, _ -> }
             .setPositiveButton("Да") { _, _ ->
                 delPlaylist(playlist.playlistId!!)
                 delFilePicture(playlist.preview!!)
