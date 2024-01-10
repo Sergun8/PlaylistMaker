@@ -54,6 +54,7 @@
     <string name="descript">Descript</string>
     <string name="_00">00 минут</string>
     <string name="_198_tracks">198 трэков</string>
+    <string name="not_track">В этом плейлисте нет треков</string>
     <plurals name="track_amount">
         <item quantity="zero"> треков</item>
         <item quantity="one"> трек</item>

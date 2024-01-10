@@ -23,6 +23,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.R.dimen
@@ -108,7 +109,7 @@ class NewPlaylistFragment : Fragment() {
 
     private fun setPreview() {
         var flag = false
-        val namePreview = generateImageName()
+        var namePreview = generateImageName()
         var coverUri: Uri? = null
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -120,6 +121,7 @@ class NewPlaylistFragment : Fragment() {
                         .placeholder(R.drawable.ic_toast)
                         .fitCenter()
                         .transform(
+                            CenterCrop(),
                             RoundedCorners(this.resources.getDimensionPixelSize(dimen.cornerRadius_8))
                         )
                         .into(binding.addImage)
@@ -130,6 +132,7 @@ class NewPlaylistFragment : Fragment() {
             }
         binding.imageView.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            createArgs(.preview)
         }
 
 
@@ -143,7 +146,7 @@ class NewPlaylistFragment : Fragment() {
                     playlistID!!,
                     binding.editName.text.toString(),
                     binding.description.text.toString(),
-                    namePreview
+                    arguments?.getString("PREVIEW").toString()
                 )
                 showMessage("Плейлист ${binding.editName.text} сохранен")
             } else {
@@ -249,7 +252,7 @@ class NewPlaylistFragment : Fragment() {
                 .load(File(filePath, preview))
                 .fitCenter()
                 .placeholder(R.drawable.dashees)
-                .transform(
+                .transform(CenterCrop(),
                     RoundedCorners(this.resources.getDimensionPixelSize(dimen.cornerRadius_8))
                 )
                 .into(binding.addImage)

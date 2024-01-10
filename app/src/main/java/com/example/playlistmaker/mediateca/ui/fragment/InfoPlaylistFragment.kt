@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -53,17 +55,13 @@ class InfoPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        //
         viewModel.getInfoPlaylist(requireArguments().getLong("ARGS_PLAYLIST"))
         adapter = TrackAdapter {
-
             findNavController().navigate(
                 R.id.action_infoPlaylistFragment_to_playerFragment,
                 PlayerFragment.createArgs(Gson().toJson(it))
             )
         }
-
         adapter.onLongTrackClick = { track ->
             deleteTrackDialog(track.trackId, currentPlaylist.playlistId!!)
             true
@@ -127,7 +125,9 @@ class InfoPlaylistFragment : Fragment() {
     private fun render(state: InfoPlaylistState) {
         when (state) {
             is InfoPlaylistState.Content -> showPlaylist(state.playlist, state.tracks)
-            is InfoPlaylistState.Empty -> shareDialog()
+            is InfoPlaylistState.Empty ->
+                shareDialog()
+
 
         }
     }
@@ -150,6 +150,14 @@ class InfoPlaylistFragment : Fragment() {
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     private fun showPlaylist(playlist: Playlist, track: List<Track>) {
         currentPlaylist = playlist
+        if (track.isEmpty()) {
+            binding.placeholderBs.isVisible = true
+            binding.placeholderMessageBs.isVisible = true
+        } else {
+            binding.placeholderBs.isGone = true
+            binding.placeholderMessageBs.isGone = true
+
+        }
         tracks = track
         adapter.trackList.clear()
         adapter.trackList.addAll(track)
@@ -177,7 +185,6 @@ class InfoPlaylistFragment : Fragment() {
             Glide.with(root.context)
                 .load(File(filePath, playlist.preview!!))
                 .transform(CenterCrop())
-                .placeholder(R.drawable.ic_toast)
                 .into(ivCoverPlaylist)
         }
 
@@ -243,7 +250,7 @@ class InfoPlaylistFragment : Fragment() {
 
     private fun shareDialog() {
         MaterialAlertDialogBuilder(requireActivity())
-            .setTitle("В этом плейлисте нет списка треков, которым можно поделиться")
+            .setMessage("В этом плейлисте нет списка треков, которым можно поделиться")
             .setPositiveButton("OK") { _, _ -> }
             .show()
     }

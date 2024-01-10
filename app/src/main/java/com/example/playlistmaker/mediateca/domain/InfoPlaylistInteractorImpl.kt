@@ -8,7 +8,7 @@ class InfoPlaylistInteractorImpl(private val repository: PlaylistRepository, pri
     override suspend fun getInfoPlaylist(playListId: Long): Flow<Playlist> {
         return repository.getInfoPlaylist(playListId)
     }
-    override suspend fun getListTrack(trackIds: MutableList<Long>) : Flow<List<Track>> {
+    override suspend fun getListTrack(trackIds: List<Long>) : Flow<List<Track>> {
         return repository.getListTrack(trackIds)
     }
     override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: Long) {

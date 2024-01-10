@@ -12,12 +12,28 @@
         android:layout_height="match_parent"
         android:background="@color/light_gray">
 
+
+
+        <ImageView
+            android:id="@+id/iv_cover_toast"
+            android:layout_width="316dp"
+            android:layout_height="273dp"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="@string/ignore"
+            android:src="@drawable/ic_toast"
+            app:layout_constraintDimensionRatio="h,1:1"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_cover_playlist"
+            app:layout_constraintEnd_toEndOf="@+id/iv_cover_playlist"
+            app:layout_constraintStart_toStartOf="@+id/iv_cover_playlist"
+            app:layout_constraintTop_toTopOf="@+id/iv_cover_playlist"
+           />
+
         <ImageView
             android:id="@+id/iv_cover_playlist"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_toast"
             app:layout_constraintBottom_toTopOf="@id/tv_name"
             app:layout_constraintDimensionRatio="h,1:1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -25,6 +41,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/info_playlist_toolbars"
             android:contentDescription="@string/ignore" />
+
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/info_playlist_toolbars"
@@ -133,14 +150,15 @@
             android:contentDescription="@string/ignore" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/playlist_tracks_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_bottom_sheet"
         android:orientation="vertical"
+        android:scrollbars="vertical"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="270dp"
+        app:behavior_peekHeight="150dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -148,8 +166,11 @@
             android:layout_height="4dp"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/bottom_sheet" />
+            android:background="@drawable/bottom_sheet"
+            android:paddingTop="@dimen/margin_8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewTrack"
@@ -158,10 +179,36 @@
             android:layout_marginStart="@dimen/margin_13"
             android:layout_marginEnd="@dimen/margin_12"
             android:layout_marginBottom="@dimen/margin_8"
-            android:layout_weight="1"
-            android:height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/placeholder_bs"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/ic_nothing_found"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/placeholder_message_bs"
+            style="@style/TextStyleMedium19_400"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textAlignment="center"
+            android:visibility="gone"
+            android:text="@string/not_track"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/placeholder_bs" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <View android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -175,7 +222,7 @@
         android:background="@drawable/background_bottom_sheet"
         android:orientation="vertical"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="360dp"
+        app:behavior_peekHeight="270dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         app:layout_constraintTop_toBottomOf="@+id/ib_more">
 

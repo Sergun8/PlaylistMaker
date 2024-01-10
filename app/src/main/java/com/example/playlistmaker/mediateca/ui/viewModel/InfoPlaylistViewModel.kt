@@ -65,9 +65,7 @@ class InfoPlaylistViewModel(private val interactor: InfoPlaylistInteractor) : Vi
         return sharingText
     }
     private fun processResult(playlist: Playlist, tracks: List<Track>) {
-
         _stateLiveData.postValue(InfoPlaylistState.Content(playlist, tracks))
-
     }
 
 }
