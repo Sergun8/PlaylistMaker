@@ -109,12 +109,10 @@ class NewPlaylistFragment : Fragment() {
 
     private fun setPreview() {
         var flag = false
-        var namePreview = generateImageName()
-        var coverUri: Uri? = null
+        val namePreview = generateImageName()
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    coverUri = uri
                     flag = true
                     Glide.with(requireContext())
                         .load(uri)
@@ -132,22 +130,26 @@ class NewPlaylistFragment : Fragment() {
             }
         binding.imageView.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            createArgs(.preview)
         }
 
 
         binding.saveButton.setOnClickListener {
             if (playlistID != null) {
-                if (coverUri != null) saveImageToPrivateStorage(
-                    coverUri!!,
-                    arguments?.getString("PREVIEW").toString()
-                )
-                viewModel.updatePlaylist(
-                    playlistID!!,
-                    binding.editName.text.toString(),
-                    binding.description.text.toString(),
-                    arguments?.getString("PREVIEW").toString()
-                )
+                if (flag) {
+                    viewModel.updatePlaylist(
+                        playlistID!!,
+                        binding.editName.text.toString(),
+                        binding.description.text.toString(),
+                        namePreview
+                    )
+                } else {
+                    viewModel.updatePlaylist(
+                        playlistID!!,
+                        binding.editName.text.toString(),
+                        binding.description.text.toString(),
+                        arguments?.getString("PREVIEW").toString()
+                    )
+                }
                 showMessage("Плейлист ${binding.editName.text} сохранен")
             } else {
                 viewModel.savePlaylist(
@@ -252,12 +254,14 @@ class NewPlaylistFragment : Fragment() {
                 .load(File(filePath, preview))
                 .fitCenter()
                 .placeholder(R.drawable.dashees)
-                .transform(CenterCrop(),
+                .transform(
+                    CenterCrop(),
                     RoundedCorners(this.resources.getDimensionPixelSize(dimen.cornerRadius_8))
                 )
                 .into(binding.addImage)
         }
     }
+
     companion object {
         const val PICTURES = "playlist"
         fun createArgs(
