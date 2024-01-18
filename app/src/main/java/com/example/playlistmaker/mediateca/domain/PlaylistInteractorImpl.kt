@@ -11,6 +11,8 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
     override suspend fun addPlaylist(playlist: Playlist) {
         playlistRepository.addPlaylist(playlist)
     }
-
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        playlistRepository.updatePlaylistInfo(playlist)
+    }
 
 }

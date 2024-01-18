@@ -132,6 +132,7 @@ class FavoriteFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         favoriteTracksViewModel.fillData()
+        isClickAllowed = true
     }
 
     companion object {

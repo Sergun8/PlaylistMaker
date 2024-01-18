@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_mediaFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_mediatecaFragment_to_infoPlaylistFragment"
+            app:destination="@id/infoPlaylistFragment" />
     </fragment>
     <fragment
         android:id="@+id/playerFragment"
@@ -49,6 +52,18 @@
         <action
             android:id="@+id/action_newPlaylistFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/infoPlaylistFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.fragment.InfoPlaylistFragment"
+        android:label="InfoPlaylistFragment"
+        tools:layout="@layout/fragment_info_playlist">
+        <action
+            android:id="@+id/action_infoPlaylistFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_infoPlaylistFragment_to_NewPlaylistFragment"
+            app:destination="@id/NewPlaylistFragment" />
     </fragment>
 
 </navigation>

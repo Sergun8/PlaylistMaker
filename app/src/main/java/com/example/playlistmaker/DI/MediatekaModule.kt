@@ -10,10 +10,13 @@ import com.example.playlistmaker.mediateca.data.db.convertors.TrackInPlaylistDbC
 import com.example.playlistmaker.mediateca.domain.FavoriteTrackRepository
 import com.example.playlistmaker.mediateca.domain.FavoriteInteractor
 import com.example.playlistmaker.mediateca.domain.FavoriteInteractorImpl
+import com.example.playlistmaker.mediateca.domain.InfoPlaylistInteractor
+import com.example.playlistmaker.mediateca.domain.InfoPlaylistInteractorImpl
 import com.example.playlistmaker.mediateca.domain.PlaylistInteractor
 import com.example.playlistmaker.mediateca.domain.PlaylistInteractorImpl
 import com.example.playlistmaker.mediateca.domain.PlaylistRepository
 import com.example.playlistmaker.mediateca.ui.viewModel.FavoriteViewModel
+import com.example.playlistmaker.mediateca.ui.viewModel.InfoPlaylistViewModel
 import com.example.playlistmaker.mediateca.ui.viewModel.NewPlaylistViewModel
 import com.example.playlistmaker.mediateca.ui.viewModel.PlaylistViewModel
 import org.koin.android.ext.koin.androidContext
@@ -42,6 +45,9 @@ val MediatecaModule = module {
     single<PlaylistInteractor> {
         PlaylistInteractorImpl(get())
     }
+    single<InfoPlaylistInteractor> {
+        InfoPlaylistInteractorImpl(get(), get())
+    }
 
     viewModel {
         FavoriteViewModel(favoriteInteractor = get())
@@ -51,5 +57,8 @@ val MediatecaModule = module {
     }
     viewModel {
         NewPlaylistViewModel(playlistInteractor = get())
+    }
+    viewModel {
+        InfoPlaylistViewModel(interactor = get())
     }
 }

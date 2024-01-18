@@ -38,7 +38,13 @@ class PlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         playlistsViewModel.fillData()
-        adapter = PlaylistAdapter()
+        adapter = PlaylistAdapter {
+            findNavController().navigate(
+                R.id.action_mediatecaFragment_to_infoPlaylistFragment,
+                InfoPlaylistFragment.createArgs(it.playlistId!!)
+            )
+        }
+
         with(binding) {
             placeholderMessage.text = getString(R.string.playlist_empty)
             placeholder.setImageResource(R.drawable.ic_nothing_found)
@@ -97,6 +103,7 @@ class PlaylistFragment : Fragment() {
         adapter?.playlists?.addAll(playlist)
         adapter?.notifyDataSetChanged()
     }
+
     override fun onResume() {
         super.onResume()
         playlistsViewModel.fillData()
@@ -111,6 +118,7 @@ class PlaylistFragment : Fragment() {
         super.onStart()
         playlistsViewModel.fillData()
     }
+
     companion object {
         private const val PAGE = "PAGE"
         fun newInstance(number: Int) = PlaylistFragment().apply {

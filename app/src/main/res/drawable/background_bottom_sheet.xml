@@ -15,7 +15,7 @@
 
     <item
         android:width="50dp"
-        android:height="4dp"
+        android:height="50dp"
         android:top="8dp"
         android:gravity="center_horizontal">
         <shape

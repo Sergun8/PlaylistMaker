@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.NewPlaylistFragment, R.id.playerFragment -> hideBottomNav()
+                R.id.NewPlaylistFragment, R.id.playerFragment, R.id.infoPlaylistFragment -> hideBottomNav()
                 else -> showBottomNav()
             }
         }
